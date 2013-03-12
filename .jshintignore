@@ -1,0 +1,7 @@
+console
+bin
+test
+examples
+node_modules
+packages
+.git
