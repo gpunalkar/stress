@@ -3,7 +3,6 @@
     - Default results to ~/.config/stress/reports and write to there
 - Build
     - Convert from Makefile to grunt.js
-    - Add .jshintrc and .jshintignore
     - Enable code coverage and reporting
 - Console
     - Update test spec on real data
