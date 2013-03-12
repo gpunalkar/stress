@@ -5,9 +5,9 @@ SOURCES = lib/header.js lib/config.js lib/util.js lib/stats.js lib/loop/loop.js 
 all: compile
 
 clean:
-	rm -rf ./lib-cov
-	rm -f ./nodeload.js ./lib/reporting/*.tpl.js
-	rm -f results-*-err.log results-*-stats.log results-*-summary.html
+	rm -rf "./lib-cov"
+	rm -f "./nodeload.js" "./lib/reporting/*.tpl.js"
+	rm -f "results-*-err.log" "results-*-stats.log" "results-*-summary.html"
 
 templates:
 	$(PROCESS_TPL) REPORT_SUMMARY_TEMPLATE lib/reporting/summary.tpl > lib/reporting/summary.tpl.js
@@ -15,5 +15,5 @@ templates:
 
 compile: templates
 	echo "#!/usr/bin/env node" > ./nodeload.js
-	cat $(SOURCES) | ./scripts/jsmin.js >> ./nodeload.js
+	cat $(SOURCES) >> ./nodeload.js
 	chmod +x ./nodeload.js

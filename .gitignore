@@ -3,3 +3,4 @@ results-*
 .reporting.test-output.html
 tmp
 node_modules
+.idea
