@@ -4,10 +4,22 @@ var program = require('commander'),
     pkg = require('../package.json'),
     url = require('url');
 
+var usage = [
+    '[options] <host>:<port>[<path>]',
+    '',
+    '  Description:', // match commander.js 2-space indent
+    '',
+    '\tThis tool is for generating lots of requests to send to an HTTP API. It is',
+    "\tinspired by Apache's ab benchmark tool and is designed to let programmers",
+    '\tdevelop load tests and get informative reports without having to learn a',
+    '\tbig and complicated framework.',
+    ''
+];
+
 // Setup Program options and parsing
 program
     .version(pkg.version)
-    .usage('[options] <host>:<port>[<path>]')
+    .usage(usage.join('\n'))
     .option('-n, --number <Number>', 'Number of requests to make. Defaults to value of --concurrency unless a time limit is specified.', parseInt, -1)
     .option('-c, --concurrency <Number>','Concurrent number of connections. Defaults to 1.', parseInt, 1)
     .option('-t, --time-limit <Number>', 'Number of seconds to spend running test. Default is continuous operation.', parseInt, -1)
@@ -44,7 +56,7 @@ var parseTarget = function (value) {
 // Validate target host:port[path]
 var options = parseTarget(program.args);
 if(options === null){
-    process.stderr.write('No target specified!');
+    process.stderr.write('\nNo target specified!\n');
     program.help();
     process.exit(1);
 }
