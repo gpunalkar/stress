@@ -1,4 +1,9 @@
 
+0.0.2 / 2013-03-13 
+==================
+Moved from jimschubert/nodeload to jimschubert/stress
+
+
 0.0.1 / 2013-03-13 
 ==================
 
