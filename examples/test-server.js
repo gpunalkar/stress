@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-require('http').createServer(function (req, res) {
+var server = require('http').createServer(function (req, res) {
   var maxDelayMs = 500;
   var delay = Math.round(Math.random()*maxDelayMs) + 1000;
   setTimeout(function () {
@@ -7,5 +7,21 @@ require('http').createServer(function (req, res) {
     res.write(delay+'\n');
     res.end();
   }, delay);
-}).listen(9000);
-console.log('Server running at http://127.0.0.1:9000/');
+});
+
+server.listen(9000, function(){
+    console.log('Server running at http://127.0.0.1:9000/');
+});
+
+function killServer(){
+    console.log('Shutting down server on http://127.0.0.1:9000/');
+    try {
+        server.close();
+    } catch(e){
+
+    }
+    process.exit();
+}
+
+process.on('SIGINT', killServer);
+process.on('SIGTERM', killServer);

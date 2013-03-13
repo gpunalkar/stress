@@ -2,6 +2,7 @@
 'use strict';
 var program = require('commander'),
     pkg = require('../package.json'),
+    path = require('path'),
     url = require('url');
 
 var usage = [
@@ -72,11 +73,26 @@ function printItem(name, val, padLength) {
 
 var nl = require('../');
 
-nl.quiet();
+if(program.quiet) {
+    nl.quiet();
+}
+
 nl.setMonitorIntervalMs(program.reportInterval * 1000);
 
 if(program.baseDir){
     nl.setBaseDir(program.baseDir);
+}
+
+var genSpec = null;
+if(program.requestGenerator){
+    try {
+        genSpec = require(path.resolve(program.requestGenerator)).getRequest;
+        console.log(genSpec)
+        console.log('path: %j, genSpec: %j', path.resolve(program.requestGenerator), genSpec);
+    } catch(e){
+        console.log(e);
+        process.exit(1);
+    }
 }
 
 var testStart,
@@ -87,7 +103,7 @@ var test = nl.run({
     name: options.host,
     host: options.host,
     port: options.port,
-    requestGenerator: program.requestGenerator,
+    requestGenerator: genSpec,
     method: program.method,
     path: options.path,
     requestData: program.requestData,

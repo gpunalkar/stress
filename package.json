@@ -1,6 +1,6 @@
 {
   "name": "stress",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Load testing library for node.js",
   "keywords": [
     "testing",
