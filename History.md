@@ -1,4 +1,11 @@
 
+0.0.3 / 2013-03-13 
+==================
+ * Fixed test generator
+ * Honor quiet switch
+ * Kill examples/test-server on termination
+
+
 0.0.2 / 2013-03-13 
 ==================
 Moved from jimschubert/nodeload to jimschubert/stress
