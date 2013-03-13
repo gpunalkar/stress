@@ -38,5 +38,6 @@
     "sub": true,
     "strict": false,
     "white": false,
-    "unused": true
+    "unused": true,
+    "proto": true
 }

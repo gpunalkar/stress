@@ -1,4 +1,6 @@
-// TODO: Rather than cat {SOURCES} > nodeload.js (maintenance nightmare) require modules here and expose nl.run
-var loadTesting = require('./lib/loadtesting');
+var loadTesting = require('./lib/loadtesting'),
+    config = require('./lib/config');
 
-module.exports.run = exports.run = loadTesting.run;
+module.exports.run = loadTesting.run;
+module.exports.setMonitorIntervalMs = exports.setMonitorIntervalMs = config.setMonitorIntervalMs;
+module.exports.quiet = exports.quiet = config.quiet;

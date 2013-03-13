@@ -69,9 +69,10 @@ function printItem(name, val, padLength) {
     puts(pad(name + ':', padLength) + ' ' + val);
 }
 
-var nl = require('../')
-    .quiet()
-    .setMonitorIntervalMs(program.reportInterval * 1000);
+var nl = require('../');
+
+nl.quiet();
+nl.setMonitorIntervalMs(program.reportInterval * 1000);
 
 var testStart,
     numRequests = program.number > 0 ? program.number : program.concurrency,

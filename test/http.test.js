@@ -4,7 +4,7 @@ var assert = require('assert'),
     HttpServer = require('../lib/http').HttpServer;
 
 var server = new HttpServer().start(9020);
-setTimeout(function() { server.stop(); }, 1500);
+setTimeout(function() { server.stop(); }, 2000);
 
 module.exports = {
     'example: add a new route': function(beforeExit) {
