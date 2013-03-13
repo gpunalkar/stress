@@ -7,7 +7,7 @@
     "load testing",
     "http"
   ],
-  "homepage": "https://github.com/jimschubert/nodeload",
+  "homepage": "https://github.com/jimschubert/stress",
   "engines": {
     "node": ">=0.8.10"
   },
@@ -19,11 +19,11 @@
     "Jim Schubert <james.schubert@gmail.com>"
   ],
   "bugs": {
-    "web": "https://github.com/jimschubert/nodeload/issues"
+    "web": "https://github.com/jimschubert/stress/issues"
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/jimschubert/nodeload"
+    "url": "http://github.com/jimschubert/stress"
   },
   "main": "./index.js",
   "bin": {

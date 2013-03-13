@@ -6,7 +6,7 @@ First, it's recommended that [npm](http://npmjs.org/) is installed. Just run:
 
 The clone nodeload and run `npm link`
 
-    git clone git://github.com/jimschubert/nodeload.git
+    git clone git://github.com/jimschubert/stress.git
     cd nodeload
     npm install expresso -g
     npm link
