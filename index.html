@@ -24,12 +24,12 @@
       <div id="banner">
         <span id="logo"></span>
 
-        <a href="https://github.com/jimschubert/nodeload" class="button fork"><strong>View On GitHub</strong></a>
+        <a href="https://github.com/jimschubert/stress" class="button fork"><strong>View On GitHub</strong></a>
         <div class="downloads">
           <span>Downloads:</span>
           <ul>
-            <li><a href="https://github.com/jimschubert/nodeload/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/jimschubert/nodeload/tarball/master" class="button">TAR</a></li>
+            <li><a href="https://github.com/jimschubert/stress/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/jimschubert/stress/tarball/master" class="button">TAR</a></li>
           </ul>
         </div>
       </div><!-- end banner -->
@@ -61,7 +61,7 @@ npm install nodeload
 <li>
 <p>From source:</p>
 
-<pre><code>git clone git://github.com/jimschubert/nodeload.git
+<pre><code>git clone git://github.com/jimschubert/stress.git
 cd nodeload
 npm link    # optional. enables require('nodeload/&lt;module&gt;') instead of require('./lib/&lt;module&gt;').
 </code></pre>
@@ -69,20 +69,20 @@ npm link    # optional. enables require('nodeload/&lt;module&gt;') instead of re
 <li>
 <p>Or as a single file (this does not install the <code>stress.js</code> tool):</p>
 
-<pre><code>wget https://github.com/jimschubert/nodeload/raw/master/nodeload.js
+<pre><code>wget https://github.com/jimschubert/stress/raw/master/nodeload.js
 </code></pre>
 </li>
 </ol><h1>NODELOAD</h1>
 
 <p><code>nodeload</code> is a collection of independent <a href="http://nodejs.org/">node.js</a> modules for load testing HTTP services.</p>
 
-<p>As a developer, you should be able to write load tests and get informative reports without having to learn another framework. You should be able to build by example and selectively use the parts of a tool that fit your task. Being a library means that you can use as much or as little of <code>nodeload</code> as makes sense, and you can create load tests with the power of a full programming language. For example, if you need to execute some function at a given rate, just use the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/loop.md"><code>'nodeload/loop'</code></a> module, and write the rest yourself.</p>
+<p>As a developer, you should be able to write load tests and get informative reports without having to learn another framework. You should be able to build by example and selectively use the parts of a tool that fit your task. Being a library means that you can use as much or as little of <code>nodeload</code> as makes sense, and you can create load tests with the power of a full programming language. For example, if you need to execute some function at a given rate, just use the <a href="https://github.com/jimschubert/stress/tree/master/doc/loop.md"><code>'nodeload/loop'</code></a> module, and write the rest yourself.</p>
 
 <p>In addition, <code>nodeload</code> is built for operability. It can always be deployed by simply copying the single file, <code>nodeload.js</code>.</p>
 
-<p>Look for examples in the <a href="https://github.com/jimschubert/nodeload/tree/master/examples"><code>examples/</code></a> directory and in test cases prefixed with "example" in <a href="https://github.com/jimschubert/nodeload/tree/master/test"><code>test/</code></a>. Here are simple examples of each module:</p>
+<p>Look for examples in the <a href="https://github.com/jimschubert/stress/tree/master/examples"><code>examples/</code></a> directory and in test cases prefixed with "example" in <a href="https://github.com/jimschubert/stress/tree/master/test"><code>test/</code></a>. Here are simple examples of each module:</p>
 
-<h3><a href="https://github.com/jimschubert/nodeload/tree/master/bin/stress.js">stress</a></h3>
+<h3><a href="https://github.com/jimschubert/stress/tree/master/bin/stress.js">stress</a></h3>
 
 <p><code>stress</code> is an <a href="http://httpd.apache.org/docs/2.0/programs/ab.html">Apache Bench (ab)</a> like command line tool for running tests quickly. Run <code>./bin/stress.js -h</code> for usage information.</p>
 
@@ -94,9 +94,9 @@ $ ./bin/stress.js -c 10 -n 10000 -i 2 localhost:9000
 
 <p>Thanks to Orlando Vazquez <a href="mailto:ovazquez@gmail.com">ovazquez@gmail.com</a> for the original proof of concept app.</p>
 
-<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/nodeload.md">nodeload</a></h3>
+<h3><a href="https://github.com/jimschubert/stress/tree/master/doc/nodeload.md">nodeload</a></h3>
 
-<p>The <code>nodeload</code> module is the primary interface for creating load tests. It includes all the other modules described below, so if you <code>require('nodeload')</code>, you don't need to <code>require()</code> any of the other ones. Look at the examples in <a href="https://github.com/jimschubert/nodeload/tree/master/examples/loadtesting.ex.js"><code>examples/loadtesting.ex.js</code></a> and <a href="https://github.com/jimschubert/nodeload/tree/master/examples/riaktest.ex.js"><code>examples/riaktest.ex.js</code></a> or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/nodeload.md">nodeload module documentation</a>.</p>
+<p>The <code>nodeload</code> module is the primary interface for creating load tests. It includes all the other modules described below, so if you <code>require('nodeload')</code>, you don't need to <code>require()</code> any of the other ones. Look at the examples in <a href="https://github.com/jimschubert/stress/tree/master/examples/loadtesting.ex.js"><code>examples/loadtesting.ex.js</code></a> and <a href="https://github.com/jimschubert/stress/tree/master/examples/riaktest.ex.js"><code>examples/riaktest.ex.js</code></a> or read the <a href="https://github.com/jimschubert/stress/tree/master/doc/nodeload.md">nodeload module documentation</a>.</p>
 
 <pre><code>var nl = require('nodeload');
 var loadtest = nl.run({
@@ -113,9 +113,9 @@ var loadtest = nl.run({
 loadtest.on('end', function() { console.log('Load test done.'); });
 </code></pre>
 
-<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/remote.md">remote</a></h3>
+<h3><a href="https://github.com/jimschubert/stress/tree/master/doc/remote.md">remote</a></h3>
 
-<p>The <code>remote</code> module provides a mechanism for running a distributed load test. See <a href="https://github.com/jimschubert/nodeload/tree/master/examples/remotetesting.ex.js"><code>examples/remotetesting.ex.js</code></a> and <a href="https://github.com/jimschubert/nodeload/tree/master/examples/remote.ex.js"><code>examples/remote.ex.js</code></a> for examples or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/remote.md">remote module documentation</a>.</p>
+<p>The <code>remote</code> module provides a mechanism for running a distributed load test. See <a href="https://github.com/jimschubert/stress/tree/master/examples/remotetesting.ex.js"><code>examples/remotetesting.ex.js</code></a> and <a href="https://github.com/jimschubert/stress/tree/master/examples/remote.ex.js"><code>examples/remote.ex.js</code></a> for examples or read the <a href="https://github.com/jimschubert/stress/tree/master/doc/remote.md">remote module documentation</a>.</p>
 
 <p>Start slave instances:</p>
 
@@ -141,9 +141,9 @@ cluster.run({
 cluster.on('end', function() { console.log('Load test done.'); });
 </code></pre>
 
-<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/stats.md">stats</a></h3>
+<h3><a href="https://github.com/jimschubert/stress/tree/master/doc/stats.md">stats</a></h3>
 
-<p>The <code>stats</code> module provides implementations of various statistics objects, like Histograms and Accumulators, and functions, like randomString(), and nextGaussian(). See the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/stats.md">stats module documentation</a>.</p>
+<p>The <code>stats</code> module provides implementations of various statistics objects, like Histograms and Accumulators, and functions, like randomString(), and nextGaussian(). See the <a href="https://github.com/jimschubert/stress/tree/master/doc/stats.md">stats module documentation</a>.</p>
 
 <pre><code>var stats = require('nodeload/stats');
 var histogram = new stats.Histogram();
@@ -154,9 +154,9 @@ console.log('Mean: ' + histogram.mean() + ', 99%: ' + histogram.percentile(0.99)
 
 <p>will output "<code>Mean: 0.852, 99%: 3</code>".</p>
 
-<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/monitoring.md">monitoring</a></h3>
+<h3><a href="https://github.com/jimschubert/stress/tree/master/doc/monitoring.md">monitoring</a></h3>
 
-<p>The <code>monitoring</code> module provides a way to track runtime statistics for code that is run concurrently. See <a href="https://github.com/jimschubert/nodeload/tree/master/test/monitoring.test.js"><code>test/monitoring.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/monitoring.md">monitoring module documentation</a>.</p>
+<p>The <code>monitoring</code> module provides a way to track runtime statistics for code that is run concurrently. See <a href="https://github.com/jimschubert/stress/tree/master/test/monitoring.test.js"><code>test/monitoring.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/stress/tree/master/doc/monitoring.md">monitoring module documentation</a>.</p>
 
 <pre><code>var monitoring = require('nodeload/monitoring');
 var monitor = new monitoring.Monitor('runtime');
@@ -172,9 +172,9 @@ process.on('exit', function() {
 
 <p>will output "<code>Median runtime (ms): 497</code>".</p>
 
-<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/reporting.md">reporting</a></h3>
+<h3><a href="https://github.com/jimschubert/stress/tree/master/doc/reporting.md">reporting</a></h3>
 
-<p>The <code>reporting</code> module provides a way to graph values over time and present it in a auto-updating HTML page. See <a href="https://github.com/jimschubert/nodeload/tree/master/test/reporting.test.js"><code>test/reporting.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/reporting.md">reporting module documentation</a>.</p>
+<p>The <code>reporting</code> module provides a way to graph values over time and present it in a auto-updating HTML page. See <a href="https://github.com/jimschubert/stress/tree/master/test/reporting.test.js"><code>test/reporting.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/stress/tree/master/doc/reporting.md">reporting module documentation</a>.</p>
 
 <pre><code>var reporting = require('nodeload/reporting'), 
     stats = require('nodeload/stats'),
@@ -192,9 +192,9 @@ for (var timeout = 0; timeout &lt; 5000; timeout+=500) {
 
 <p>will display a graph on http://localhost:8000/ and save it to an HTML file in the local directory.</p>
 
-<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/loop.md">loop</a></h3>
+<h3><a href="https://github.com/jimschubert/stress/tree/master/doc/loop.md">loop</a></h3>
 
-<p>The <code>loop</code> module provides a way to execute a function at a set rate and concurrency. See <a href="https://github.com/jimschubert/nodeload/tree/master/test/loop.test.js"><code>test/loop.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/loop.md">loop module documentation</a> for details.</p>
+<p>The <code>loop</code> module provides a way to execute a function at a set rate and concurrency. See <a href="https://github.com/jimschubert/stress/tree/master/test/loop.test.js"><code>test/loop.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/stress/tree/master/doc/loop.md">loop module documentation</a> for details.</p>
 
 <pre><code>var http = require('http'),
     loop = require('nodeload/loop'),
@@ -215,9 +215,9 @@ l.on('end', function() { console.log('Total requests: ' + requests) });
 
 <p>will output "<code>Total requests: 30</code>".</p>
 
-<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/http.md">http</a></h3>
+<h3><a href="https://github.com/jimschubert/stress/tree/master/doc/http.md">http</a></h3>
 
-<p>The <code>http</code> module provides a generic HTTP server that serves static files and that can be configured with new routes. See <a href="https://github.com/jimschubert/nodeload/tree/master/test/http.test.js"><code>test/http.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/http.md">http module documentation</a>.</p>
+<p>The <code>http</code> module provides a generic HTTP server that serves static files and that can be configured with new routes. See <a href="https://github.com/jimschubert/stress/tree/master/test/http.test.js"><code>test/http.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/stress/tree/master/doc/http.md">http module documentation</a>.</p>
 
 <pre><code>var http = require('nodeload/http');
 var server = new http.HttpServer().start(10000);
@@ -231,7 +231,7 @@ server.addRoute('^/hello$', function(url, req, res) {
 
 <h1>CONTRIBUTING</h1>
 
-<p>File bugs on <a href="https://github.com/jimschubert/nodeload/issues">github</a>, email any of the authors, and fork away. <a href="https://github.com/jimschubert/nodeload/tree/master/doc/developers.md">doc/developers.md</a> has brief instructions on getting tests up and running, and will hold more design details in the future. Contributions are always welcome.</p>
+<p>File bugs on <a href="https://github.com/jimschubert/stress/issues">github</a>, email any of the authors, and fork away. <a href="https://github.com/jimschubert/stress/tree/master/doc/developers.md">doc/developers.md</a> has brief instructions on getting tests up and running, and will hold more design details in the future. Contributions are always welcome.</p>
       </section>
       <footer>
         <p>Project maintained by <a href="https://github.com/jimschubert">jimschubert</a></p>
