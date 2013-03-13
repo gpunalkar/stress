@@ -28,6 +28,7 @@ program
     .option('-d, --data <String>', 'Data to send along with PUT or POST request.')
     .option('-r, --request-generator <String>', 'Path to module that exports getRequest function')
     .option('-i, --report-interval <Number>', 'Frequency in seconds to report statistics. Default is 10.', parseInt, 10)
+    .option('--base-dir <Directory>', 'Sets the base directory for logs and reports')
     .option('-q, --quiet', 'Suppress display of progress count info.')
     .parse(process.argv);
 
@@ -73,6 +74,10 @@ var nl = require('../');
 
 nl.quiet();
 nl.setMonitorIntervalMs(program.reportInterval * 1000);
+
+if(program.baseDir){
+    nl.setBaseDir(program.baseDir);
+}
 
 var testStart,
     numRequests = program.number > 0 ? program.number : program.concurrency,

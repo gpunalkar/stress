@@ -4,3 +4,4 @@ var loadTesting = require('./lib/loadtesting'),
 module.exports.run = loadTesting.run;
 module.exports.setMonitorIntervalMs = exports.setMonitorIntervalMs = config.setMonitorIntervalMs;
 module.exports.quiet = exports.quiet = config.quiet;
+module.exports.setBaseDir = exports.setBasedir = config.setBaseDir;
