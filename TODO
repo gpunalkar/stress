@@ -1,3 +1,4 @@
+- HTTPS support
 - Output
     - Allow for configurable output directory
     - Default results to ~/.config/stress/reports and write to there

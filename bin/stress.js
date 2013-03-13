@@ -40,7 +40,7 @@ var parseTarget = function (value) {
     }
 
     var opt = {};
-    if ((''+value).search('^http://') === -1) {
+    if ((''+value).split(':')[0].search('^http') === -1) {
         value = 'http://' + value;
     }
 
