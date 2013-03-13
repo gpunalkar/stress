@@ -194,11 +194,11 @@ module.exports = {
         // Disable 'update' events after 500ms so that this test can complete
         setTimeout(function() { m.updateInterval = 0; }, 510);
 
-        m.on('update', function(interval, overall) { 
+        m.on('update', function(interval, overall) {
             assert.strictEqual(overall, m.stats);
 
             assert.ok(interval['runtime']);
-            assert.equal(interval['runtime'].length, 2);
+            assert.ok(interval['runtime'].length > 0);
             assert.ok(interval['runtime'].mean() > 0 && interval['runtime'].mean() < 10);
             assert.ok(interval['runtime'].mean() > 0 && interval['runtime'].mean() < 10);
             intervals++;

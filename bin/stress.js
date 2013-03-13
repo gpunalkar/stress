@@ -69,7 +69,7 @@ function printItem(name, val, padLength) {
     puts(pad(name + ':', padLength) + ' ' + val);
 }
 
-var nl = require('../nodeload')
+var nl = require('../')
     .quiet()
     .setMonitorIntervalMs(program.reportInterval * 1000);
 

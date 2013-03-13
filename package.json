@@ -25,10 +25,9 @@
     "type": "git",
     "url": "http://github.com/jimschubert/nodeload"
   },
-  "main": "./nodeload.js",
+  "main": "./index.js",
   "bin": {
-    "stress": "./bin/stress.js",
-    "nodeload.js": "./nodeload.js"
+    "stress": "./bin/stress.js"
   },
   "directories": {
     "doc": "./doc",
