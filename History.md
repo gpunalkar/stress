@@ -1,4 +1,52 @@
-## v0.4.0 (HEAD) ##
+
+0.0.1 / 2013-03-13 
+==================
+
+This is a re-release of nodeload. As such, the name and versioning are being reset. Deal with it.
+
+  * Added configurable log output directory
+  * Dump stats on SIGINT CTRL+C to kill long-running test should still spit out stats.
+  * Move HttpRequest include for single-file generation Until examples are updated, requires need to be done in the standard BUILD_AS_SINGLE_FILE block
+  * Various changes Fixed exports in index.js Added new HttpRequest with auto-connect event Directly inhert prototype chain for EventEmitter derived constructors Modified tests to account for variability
+  * Changes to remove nodeload.js single-file Remove single-file nodeload Update ./bin/stress.js to reflect this change Update package.json to reflect this change Fix monitoring test
+  * Clean up code comments and some spacing
+  * Uncomment lines in lib/header.js
+  * More minor adjustments for jshint warnings
+  * Removed trailing whitespace offenses
+  * Removed jshint stuff from TODO
+  * Added jshint files
+  * Fixed up some jshint errors and warnings
+  * Update README.md Updated README.md to reflect new 'ownership' of this codebase, attempting to keep executable information and attribution in tact.
+  * Updated developers doc, moved description to bin/stress.js, and removed doc/nl.md because a lot of the text is redundant with Readme
+  * Removed jsmin
+  * Updated TODO and notes in index.js
+  * Squelch no method error for oldclient .destroy
+  * Changes toward new structure
+  * Makefile, .gitignore changes Wrap rm targets in quotes Add .idea exclusion in .gitignore
+  * Update README.md
+  * - External monitors use bash instead of sh which does a better job cleaning up child processes on exit. - Update minified nodeload.js
+  * Merge remote-tracking branch 'origin/HEAD'
+  * Merge pull request #14 from ctavan/feature-v06compat
+  * Set compatibility to node >= 0.4, works with 0.6 as well
+  * Switch from sys module to util module
+  * Use optparse from npm
+  * Merge pull request #13 from Erkan-Yilmaz/master
+  * 2 fixes in README.md
+  * Update jmx & process monitoring to allow monitoring without graphing Add pause / autoupdate to reports
+  * Updates for node 0.5 Fix for # precision for external.js
+  * Change log file names to use toISOString() rather than millis
+  * Reporting: - Replace jmx.js with external.js. Add graphProcess() which replaces spawnAndMonitor() - graphJmx() checks for existence of jmxstat/jmxstat.jar - Add report.getReport, which returns the first report by the same name or creates one
+  * Add dataFormatter() option to graphJmx
+  * Add reporting.graphJmx() Upgrade jmxstat
+  * Use timestamps for summary graph x-axis.
+  * Update to latest dygraph
+  * Don't auto update summary report time on open
+  * Remove rps line from result codes graph and limit rps precision to 1 decimal place.
+  * Merge remote branch 'mmattozzi/master'
+  * Adding standalone RPS requests per second stat collector
+  * upgrade npm files to start v0.4 update tests to work with node 0.4
+
+## v0.4.0 (Nodeload Last Release) ##
 
 Compatible with node v0.4.x
 
