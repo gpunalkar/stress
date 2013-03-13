@@ -132,3 +132,7 @@ test.on('end', function() {
     process.exit(0);
 });
 test.start();
+
+process.on('SIGINT', function(){
+    test.emit('end');
+});
