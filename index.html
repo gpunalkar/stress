@@ -1,0 +1,254 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>stress by jimschubert</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>stress</h1>
+        <p>HTTP load/traffic generator and benchmark tool built on Node.js</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/jimschubert/nodeload" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/jimschubert/nodeload/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/jimschubert/nodeload/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>CURRENT STATE</h1>
+
+<p>This is a fork of <a href="https://github.com/benschmaus/nodeload">benschmaus/nodeload</a>. My current vision is to re-release
+nodeload as a separate npm module after restructuring for maintainability.</p>
+
+<p>Documentation and usage may not be in sync for a while.</p>
+
+<h1>INSTALLING</h1>
+
+<p>Make sure <a href="http://nodejs.org/#download">node.js</a> is installed. Then install <code>nodeload</code>:</p>
+
+<ol>
+<li>
+<p>Using <a href="http://npmjs.org/">npm</a>:</p>
+
+<pre><code>curl http://npmjs.org/install.sh | sh       # install npm if not already installed
+npm install nodeload
+</code></pre>
+</li>
+<li>
+<p>From source:</p>
+
+<pre><code>git clone git://github.com/jimschubert/nodeload.git
+cd nodeload
+npm link    # optional. enables require('nodeload/&lt;module&gt;') instead of require('./lib/&lt;module&gt;').
+</code></pre>
+</li>
+<li>
+<p>Or as a single file (this does not install the <code>stress.js</code> tool):</p>
+
+<pre><code>wget https://github.com/jimschubert/nodeload/raw/master/nodeload.js
+</code></pre>
+</li>
+</ol><h1>NODELOAD</h1>
+
+<p><code>nodeload</code> is a collection of independent <a href="http://nodejs.org/">node.js</a> modules for load testing HTTP services.</p>
+
+<p>As a developer, you should be able to write load tests and get informative reports without having to learn another framework. You should be able to build by example and selectively use the parts of a tool that fit your task. Being a library means that you can use as much or as little of <code>nodeload</code> as makes sense, and you can create load tests with the power of a full programming language. For example, if you need to execute some function at a given rate, just use the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/loop.md"><code>'nodeload/loop'</code></a> module, and write the rest yourself.</p>
+
+<p>In addition, <code>nodeload</code> is built for operability. It can always be deployed by simply copying the single file, <code>nodeload.js</code>.</p>
+
+<p>Look for examples in the <a href="https://github.com/jimschubert/nodeload/tree/master/examples"><code>examples/</code></a> directory and in test cases prefixed with "example" in <a href="https://github.com/jimschubert/nodeload/tree/master/test"><code>test/</code></a>. Here are simple examples of each module:</p>
+
+<h3><a href="https://github.com/jimschubert/nodeload/tree/master/bin/stress.js">stress</a></h3>
+
+<p><code>stress</code> is an <a href="http://httpd.apache.org/docs/2.0/programs/ab.html">Apache Bench (ab)</a> like command line tool for running tests quickly. Run <code>./bin/stress.js -h</code> for usage information.</p>
+
+<pre><code>$ examples/test-server.js &amp;    # starts a simple server on port 9000 to load test
+$ ./bin/stress.js -c 10 -n 10000 -i 2 localhost:9000
+</code></pre>
+
+<p>will send 10,000 queries to http://localhost:9000 using 10 connections. Statistics are printed to the console and graphs can be seen at <a href="http://localhost:8000/">http://localhost:8000/</a>.</p>
+
+<p>Thanks to Orlando Vazquez <a href="mailto:ovazquez@gmail.com">ovazquez@gmail.com</a> for the original proof of concept app.</p>
+
+<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/nodeload.md">nodeload</a></h3>
+
+<p>The <code>nodeload</code> module is the primary interface for creating load tests. It includes all the other modules described below, so if you <code>require('nodeload')</code>, you don't need to <code>require()</code> any of the other ones. Look at the examples in <a href="https://github.com/jimschubert/nodeload/tree/master/examples/loadtesting.ex.js"><code>examples/loadtesting.ex.js</code></a> and <a href="https://github.com/jimschubert/nodeload/tree/master/examples/riaktest.ex.js"><code>examples/riaktest.ex.js</code></a> or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/nodeload.md">nodeload module documentation</a>.</p>
+
+<pre><code>var nl = require('nodeload');
+var loadtest = nl.run({
+    host: 'localhost',
+    port: 9000,
+    timeLimit: 60,
+    targetRps: 500,
+    requestGenerator: function(client) {
+        var request = client.request('GET', "/" + Math.floor(Math.random()*10000));
+        request.end();
+        return request;
+    }
+});
+loadtest.on('end', function() { console.log('Load test done.'); });
+</code></pre>
+
+<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/remote.md">remote</a></h3>
+
+<p>The <code>remote</code> module provides a mechanism for running a distributed load test. See <a href="https://github.com/jimschubert/nodeload/tree/master/examples/remotetesting.ex.js"><code>examples/remotetesting.ex.js</code></a> and <a href="https://github.com/jimschubert/nodeload/tree/master/examples/remote.ex.js"><code>examples/remote.ex.js</code></a> for examples or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/remote.md">remote module documentation</a>.</p>
+
+<p>Start slave instances:</p>
+
+<pre><code>$ HTTP_PORT=10001 ./nodeload.js  # start a local slave instance on :10001
+$ HTTP_PORT=10002 ./nodeload.js  # start a 2nd slave instance on :10002
+</code></pre>
+
+<p>Create the distributed load test:</p>
+
+<pre><code>var nl = require('nodeload/remote');
+var cluster = new nl.LoadTestCluster('localhost:8000', ['localhost:8002', 'localhost:8001']);
+cluster.run({
+    host: 'localhost',
+    port: 9000,
+    timeLimit: 60,
+    targetRps: 500,
+    requestGenerator: function(client) {
+        var request = client.request('GET', "/" + Math.floor(Math.random()*10000));
+        request.end();
+        return request;
+    }
+});
+cluster.on('end', function() { console.log('Load test done.'); });
+</code></pre>
+
+<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/stats.md">stats</a></h3>
+
+<p>The <code>stats</code> module provides implementations of various statistics objects, like Histograms and Accumulators, and functions, like randomString(), and nextGaussian(). See the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/stats.md">stats module documentation</a>.</p>
+
+<pre><code>var stats = require('nodeload/stats');
+var histogram = new stats.Histogram();
+for (var i = 0; i &lt; 1000; i++) 
+    histogram.put(Math.abs(Math.floor(stats.nextGaussian())));
+console.log('Mean: ' + histogram.mean() + ', 99%: ' + histogram.percentile(0.99));
+</code></pre>
+
+<p>will output "<code>Mean: 0.852, 99%: 3</code>".</p>
+
+<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/monitoring.md">monitoring</a></h3>
+
+<p>The <code>monitoring</code> module provides a way to track runtime statistics for code that is run concurrently. See <a href="https://github.com/jimschubert/nodeload/tree/master/test/monitoring.test.js"><code>test/monitoring.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/monitoring.md">monitoring module documentation</a>.</p>
+
+<pre><code>var monitoring = require('nodeload/monitoring');
+var monitor = new monitoring.Monitor('runtime');
+function asyncFunction() {
+    var m = monitor.start();
+    setTimeout(function() { m.end(); }, Math.floor(Math.random()*1000));
+}
+for (var i = 0; i &lt; 1000; i++) { asyncFunction(); }
+process.on('exit', function() {
+    console.log('Median runtime (ms): ' + monitor.stats['runtime'].percentile(0.5));
+});
+</code></pre>
+
+<p>will output "<code>Median runtime (ms): 497</code>".</p>
+
+<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/reporting.md">reporting</a></h3>
+
+<p>The <code>reporting</code> module provides a way to graph values over time and present it in a auto-updating HTML page. See <a href="https://github.com/jimschubert/nodeload/tree/master/test/reporting.test.js"><code>test/reporting.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/reporting.md">reporting module documentation</a>.</p>
+
+<pre><code>var reporting = require('nodeload/reporting'), 
+    stats = require('nodeload/stats'),
+    report = reporting.REPORT_MANAGER.addReport('Random Numbers'),
+    chart = report.getChart('Gaussian / Pareto vs. Time (minutes)');
+for (var timeout = 0; timeout &lt; 5000; timeout+=500) {
+    setTimeout(function() {
+            chart.put({
+                'Pareto': stats.nextPareto(0, 100),
+                'Gaussian': stats.nextGaussian()
+            });
+        }, timeout);
+}
+</code></pre>
+
+<p>will display a graph on http://localhost:8000/ and save it to an HTML file in the local directory.</p>
+
+<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/loop.md">loop</a></h3>
+
+<p>The <code>loop</code> module provides a way to execute a function at a set rate and concurrency. See <a href="https://github.com/jimschubert/nodeload/tree/master/test/loop.test.js"><code>test/loop.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/loop.md">loop module documentation</a> for details.</p>
+
+<pre><code>var http = require('http'),
+    loop = require('nodeload/loop'),
+    requests = 0,
+    client = http.createClient(80, 'www.google.com'),
+    l = new loop.MultiLoop({
+        fun: function(finished) { 
+            client.request('GET', '/').end();
+            requests++;
+            finished();
+        },
+        rps: 10,
+        duration: 3,
+        concurrency: 5
+    }).start();
+l.on('end', function() { console.log('Total requests: ' + requests) });
+</code></pre>
+
+<p>will output "<code>Total requests: 30</code>".</p>
+
+<h3><a href="https://github.com/jimschubert/nodeload/tree/master/doc/http.md">http</a></h3>
+
+<p>The <code>http</code> module provides a generic HTTP server that serves static files and that can be configured with new routes. See <a href="https://github.com/jimschubert/nodeload/tree/master/test/http.test.js"><code>test/http.test.js</code></a> for examples or read the <a href="https://github.com/jimschubert/nodeload/tree/master/doc/http.md">http module documentation</a>.</p>
+
+<pre><code>var http = require('nodeload/http');
+var server = new http.HttpServer().start(10000);
+server.addRoute('^/hello$', function(url, req, res) {
+    res.writeHead(200);
+    res.end("Hello");
+});
+</code></pre>
+
+<p><a href="http://localhost:8000/package.json">http://localhost:8000/package.json</a> will output the contents of <code>./package.json</code>, and <a href="http://localhost:10000/resource">http://localhost:10000/resource</a> will display "Hello".</p>
+
+<h1>CONTRIBUTING</h1>
+
+<p>File bugs on <a href="https://github.com/jimschubert/nodeload/issues">github</a>, email any of the authors, and fork away. <a href="https://github.com/jimschubert/nodeload/tree/master/doc/developers.md">doc/developers.md</a> has brief instructions on getting tests up and running, and will hold more design details in the future. Contributions are always welcome.</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/jimschubert">jimschubert</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-39257833-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
