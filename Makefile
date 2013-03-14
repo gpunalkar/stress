@@ -7,7 +7,6 @@ all: compile
 clean:
 	rm -rf "./lib-cov"
 	rm -f "./nodeload.js" ./lib/reporting/*.tpl.js
-	rm -f results-*-err.log results-*-stats.log results-*-summary.html
 
 templates:
 	$(PROCESS_TPL) REPORT_SUMMARY_TEMPLATE lib/reporting/summary.tpl > lib/reporting/summary.tpl.js

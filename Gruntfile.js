@@ -1,5 +1,6 @@
 'use strict';
-var path = require('path');
+var path = require('path'),
+    fs = require('fs');
 
 module.exports = function(grunt) {
 
@@ -37,4 +38,57 @@ module.exports = function(grunt) {
 
     // Default task.
     grunt.registerTask('default', ['test']);
+
+    grunt.registerTask('clean-templates', 'Clean reoprt templates.', function() {
+        var msg = grunt.log.write('Cleaning up ./lib/reporting/*.tpl.js ...').ok();
+    });
+
+    grunt.registerTask('compile-templates', 'Compiling report templates.', function() {
+        var summary = fs.openSync('lib/reporting/summary.tpl.js', 'a'),
+            dygraph = fs.openSync('lib/reporting/dygraph.tpl.js', 'a');
+        grunt.util.async.waterfall([
+            function(done){
+                grunt.util.spawn({
+                    cmd: 'node',
+                    args: ['scripts/process_tpl.js', 'REPORT_SUMMARY_TEMPLATE', 'lib/reporting/summary.tpl'],
+                    opts: { stdio: ['pipe', summary, 'pipe'] }
+                }, function(error, result) {
+                    if (!error) {
+                        grunt.verbose.ok('Finished compiling lib/reporting/summary.tpl.js');
+                        done();
+                    } else {
+                        grunt.verbose.warn('Failed compiling lib/reporting/summary.tpl.js');
+                        done(error);
+                    }
+                });
+            },
+            function(done){
+                grunt.util.spawn({
+                    cmd: 'node',
+                    args: ['scripts/process_tpl.js', 'DYGRAPH_SOURCE', 'lib/reporting/dygraph.tpl'],
+                    opts: { stdio: ['pipe', dygraph, 'pipe'] }
+                }, function(error, result) {
+                    if (!error) {
+                        grunt.verbose.ok('Finished compiling lib/reporting/dygraph.tpl.js');
+                        done(null);
+                    } else {
+                        grunt.verbose.warn('Failed compiling lib/reporting/dygraph.tpl.js');
+                        done();
+                    }
+                });
+            }],
+
+            function(err){
+                fs.closeSync(summary);
+                fs.closeSync(dygraph);
+                if(err){
+                    grunt.verbose.warn(err.message);
+                } else {
+                    grunt.log.write('Finished compiling templates...').ok();
+                }
+            });
+
+            this.async();
+    });
+
 };
