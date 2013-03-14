@@ -32,14 +32,15 @@ module.exports = function(grunt) {
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
     // "npm test" runs these tasks
     grunt.registerTask('test', ['jshint']);
 
     // Default task.
-    grunt.registerTask('default', ['test', 'clean-templates', 'compile-templates']);
+    grunt.registerTask('default', ['test', 'clean-templates', 'compile-templates', 'concat:dist']);
 
-    grunt.registerTask('clean-templates', 'Clean reoprt templates.', function() {
+    grunt.registerTask('clean-templates', 'Clean report templates.', function() {
         grunt.log.write('Cleaning up ./lib/reporting/*.tpl.js ...');
 
         fs.unlinkSync('lib/reporting/summary.tpl.js');
@@ -49,6 +50,8 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('compile-templates', 'Compiling report templates.', function() {
+        var taskComplete = this.async();
+
         var summary = fs.openSync('lib/reporting/summary.tpl.js', 'a'),
             dygraph = fs.openSync('lib/reporting/dygraph.tpl.js', 'a');
         grunt.util.async.waterfall([
@@ -88,12 +91,12 @@ module.exports = function(grunt) {
                 fs.closeSync(dygraph);
                 if(err){
                     grunt.verbose.warn(err.message);
+                    taskComplete(false);
                 } else {
                     grunt.log.write('Finished compiling templates...').ok();
+                    taskComplete();
                 }
             });
-
-            this.async();
     });
 
 };
