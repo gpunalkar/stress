@@ -16,7 +16,7 @@
     "es5" : true,
     "browser" : true,
 
-    "trailing" : true,
+    "trailing" : false,
     "boss" : false,
     "curly": false,
     "debug": false,
@@ -31,13 +31,15 @@
     "noempty": false,
     "nonew": false,
     "nomen": false,
-    "onevar": true,
+    "onevar": false,
     "plusplus": false,
     "regexp": false,
     "undef": true,
     "sub": true,
     "strict": false,
     "white": false,
-    "unused": true,
-    "proto": true
+    "unused": false,
+    "proto": true,
+    "maxstatements": 30,
+    "maxerr": 100
 }
