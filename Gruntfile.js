@@ -37,10 +37,15 @@ module.exports = function(grunt) {
     grunt.registerTask('test', ['jshint']);
 
     // Default task.
-    grunt.registerTask('default', ['test']);
+    grunt.registerTask('default', ['test', 'clean-templates', 'compile-templates']);
 
     grunt.registerTask('clean-templates', 'Clean reoprt templates.', function() {
-        var msg = grunt.log.write('Cleaning up ./lib/reporting/*.tpl.js ...').ok();
+        grunt.log.write('Cleaning up ./lib/reporting/*.tpl.js ...');
+
+        fs.unlinkSync('lib/reporting/summary.tpl.js');
+        fs.unlinkSync('lib/reporting/dygraph.tpl.js');
+
+        grunt.log.ok('Removed lib/reporting/*.tpl.js');
     });
 
     grunt.registerTask('compile-templates', 'Compiling report templates.', function() {
