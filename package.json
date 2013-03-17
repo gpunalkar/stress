@@ -36,8 +36,7 @@
     "example": "./examples"
   },
   "scripts": {
-    "test": "expresso",
-    "preinstall": "make clean compile"
+    "test": "expresso"
   },
   "devDependencies": {
     "expresso": ">=0.7.7",
