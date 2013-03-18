@@ -75,8 +75,10 @@ module.exports = {
             var opReport = REPORT_MANAGER.reports.filter(function(r) { return r.name === 'Operation'; })[0];
             assert.ok(trReport && (trReport.name === 'Transaction') && trReport.charts['runtime']);
             assert.ok(opReport && (opReport.name === 'Operation') && opReport.charts['runtime']);
-            assert.equal(trReport.charts['runtime'].rows.length, 3);    // 1+2, since first row is [[0,...]]
-            assert.equal(opReport.charts['runtime'].rows.length, 3);
+
+            // accounting for variability of the timer, lengths can be 3 or 4 here.
+            assert.ok(trReport.charts['runtime'].rows.length >= 3);    // 1+2, since first row is [[0,...]]
+            assert.ok(opReport.charts['runtime'].rows.length >= 3);
             assert.ok(Math.abs(trReport.charts['runtime'].rows[2][3] - 100) < 10); // third column is 'median'
         });
     },
