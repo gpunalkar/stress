@@ -1,4 +1,7 @@
 - HTTPS support
+    - Look into switching out HTTP_SERVER to http.createServer + crossroads
+    - Look into switching out HttpRequest with mikeal/request
+- Tests need to be cleaned up to be more consistent
 - Build
     - Convert from Makefile to grunt.js
     - Enable code coverage and reporting

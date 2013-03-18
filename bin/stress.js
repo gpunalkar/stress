@@ -99,20 +99,21 @@ var testStart,
     numRequests = program.number > 0 ? program.number : program.concurrency,
     timeLimit = program.timeLimit > 0 ? program.timeLimit : Infinity;
 
-var test = nl.run({
-    name: options.host,
-    host: options.host,
-    port: options.port,
-    requestGenerator: genSpec,
-    method: program.method,
-    path: options.path,
-    requestData: program.requestData,
-    numUsers: program.concurrency,
-    numRequests: numRequests,
-    timeLimit: timeLimit,
-    targetRps: program.requestRate,
-    stats: ['latency', 'result-codes', 'request-bytes', 'response-bytes']
-});
+var spec = new nl.Spec();
+spec.name = options.host;
+spec.host = options.host;
+spec.port = options.port;
+spec.requestGenerator = genSpec;
+spec.method = program.method;
+spec.path = options.path;
+spec.requestData = program.requestData;
+spec.numUsers = program.concurrency;
+spec.numRequests = numRequests;
+spec.timeLimit = timeLimit;
+spec.targetRps = program.requestRate;
+spec.stats = ['latency', 'result-codes', 'request-bytes', 'response-bytes'];
+
+var test = nl.run(spec);
 
 test.on('start', function(tests) { testStart = +new Date(); });
 test.on('update', function(interval, stats) {
@@ -155,5 +156,9 @@ test.on('end', function() {
 test.start();
 
 process.on('SIGINT', function(){
+    test.emit('end');
+});
+
+process.on('uncaughtException', function(){
     test.emit('end');
 });
