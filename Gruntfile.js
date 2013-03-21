@@ -8,7 +8,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         concat: {
             dist: {
-                src: ['lib/header.js', 'lib/**/*.js'],
+                src: ['lib/header.js', 'lib/**/*.js', '!lib/loop/index.js', '!lib/monitoring/index.js', '!lib/remote/index.js', '!lib/reporting/index.js'],
                 dest: 'nodeload.js'
             }
         },

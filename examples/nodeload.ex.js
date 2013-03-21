@@ -3,7 +3,7 @@
 /*jslint sub:true */
 
 var http = require('http'),
-    nl = require('../nodeload');
+    stress = require('../');
 
 var svr = http.createServer(function (req, res) {
     res.writeHead((Math.random() < 0.8) ? 200 : 404, {'Content-Type': 'text/plain'});
@@ -13,7 +13,7 @@ svr.listen(9000);
 console.log('Started test server.');
 
 var i = 0,
-    readtest = {
+    readtest = new stress.Spec({
         name: "Read",
         host: 'localhost',
         port: 9000,
@@ -24,8 +24,8 @@ var i = 0,
         requestGenerator: function(client) {
             return client.request('GET', "/" + Math.floor(Math.random()*8000), { 'host': 'localhost', 'connection': 'keep-alive' });
         }
-    },
-    writetest = {
+    }),
+    writetest = new stress.Spec({
         name: "Write",
         host: 'localhost',
         port: 9000,
@@ -38,8 +38,8 @@ var i = 0,
             request.end('foo');
             return request;
         }
-    },
-    cleanup = {
+    }),
+    cleanup = new stress.Spec({
         name: "Cleanup",
         host: 'localhost',
         port: 9000,
@@ -49,12 +49,12 @@ var i = 0,
         requestGenerator: function(client) {
             return client.request('DELETE', "/" + i++, { 'host': 'localhost', 'connection': 'keep-alive' });
         }
-    },
-    loadtest = nl.run(readtest, writetest);
+    }),
+    loadtest = stress.run(readtest, writetest);
 
 loadtest.updateInterval = 1000;
 loadtest.on('end', function() {
-    loadtest = nl.run(cleanup);
+    loadtest = stress.run(cleanup);
     loadtest.on('end', function() {
         console.log('Closing test server.');
         svr.close();
