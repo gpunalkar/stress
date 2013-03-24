@@ -6,12 +6,6 @@ module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        concat: {
-            dist: {
-                src: ['lib/header.js', 'lib/**/*.js', '!lib/loop/index.js', '!lib/monitoring/index.js', '!lib/remote/index.js', '!lib/reporting/index.js'],
-                dest: 'nodeload.js'
-            }
-        },
         jshint: {
             gruntfile: ['Gruntfile.js'],
             libs_n_tests: ['lib/**/*.js'],
@@ -32,13 +26,12 @@ module.exports = function(grunt) {
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-concat');
 
     // "npm test" runs these tasks
     grunt.registerTask('test', ['jshint']);
 
     // Default task.
-    grunt.registerTask('default', ['test', 'clean-templates', 'compile-templates', 'concat:dist']);
+    grunt.registerTask('default', ['test', 'clean-templates', 'compile-templates']);
 
     grunt.registerTask('clean-templates', 'Clean report templates.', function() {
         grunt.log.write('Cleaning up ./lib/reporting/*.tpl.js ...');
