@@ -1,3 +1,5 @@
+- Tests should be rewritten in Mocha
+- Enable NODE_DEBUG debug messages
 - HTTPS support
     - Look into switching out HTTP_SERVER to http.createServer + crossroads
     - Look into switching out HttpRequest with mikeal/request
