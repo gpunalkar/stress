@@ -80,7 +80,7 @@ if(program.quiet) {
 nl.setMonitorIntervalMs(program.reportInterval * 1000);
 
 if(program.baseDir){
-    nl.setBaseDir(program.baseDir);
+    nl.config.baseDirectory(program.baseDir);
 }
 
 var genSpec = null;

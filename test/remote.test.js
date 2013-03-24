@@ -1,7 +1,7 @@
 var assert = require('assert'),
     http = require('http'),
     remote = require('../lib/remote'),
-    nlconfig = require('../lib/config').disableServer(),
+    nlconfig = require('../lib/config').enableServer(false),
     HttpServer = require('../lib/http').HttpServer,
     Cluster = remote.Cluster;
 

@@ -41,5 +41,6 @@
     "unused": false,
     "proto": true,
     "maxstatements": 30,
-    "maxerr": 100
+    "maxerr": 100,
+    "predef": ["describe","it"]
 }

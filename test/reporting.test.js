@@ -1,7 +1,7 @@
 /*jslint sub:true */
 
 var assert = require('assert'),
-    nlconfig = require('../lib/config').disableServer(),
+    nlconfig = require('../lib/config').enableServer(false),
     reporting = require('../lib/reporting'),
     monitoring = require('../lib/monitoring'),
     REPORT_MANAGER = reporting.REPORT_MANAGER;
