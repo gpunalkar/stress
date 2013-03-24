@@ -71,23 +71,23 @@ function printItem(name, val, padLength) {
     puts(pad(name + ':', padLength) + ' ' + val);
 }
 
-var nl = require('../');
+var stress = require('../');
 
 if(program.quiet) {
-    nl.quiet();
+    stress.config.quiet();
 }
 
-nl.setMonitorIntervalMs(program.reportInterval * 1000);
+stress.setMonitorIntervalMs(program.reportInterval * 1000);
 
 if(program.baseDir){
-    nl.config.baseDirectory(program.baseDir);
+    stress.config.baseDirectory(program.baseDir);
 }
 
 var genSpec = null;
 if(program.requestGenerator){
     try {
         genSpec = require(path.resolve(program.requestGenerator)).getRequest;
-        console.log(genSpec)
+        console.log(genSpec);
         console.log('path: %j, genSpec: %j', path.resolve(program.requestGenerator), genSpec);
     } catch(e){
         console.log(e);
@@ -95,11 +95,14 @@ if(program.requestGenerator){
     }
 }
 
+// TODO: Remove this. I don't like how http server and report server are started by the emitted 'apply' event.
+stress.config.apply();
+
 var testStart,
     numRequests = program.number > 0 ? program.number : program.concurrency,
     timeLimit = program.timeLimit > 0 ? program.timeLimit : Infinity;
 
-var spec = new nl.Spec();
+var spec = new stress.Spec();
 spec.name = options.host;
 spec.host = options.host;
 spec.port = options.port;
@@ -113,7 +116,7 @@ spec.timeLimit = timeLimit;
 spec.targetRps = program.requestRate;
 spec.stats = ['latency', 'result-codes', 'request-bytes', 'response-bytes'];
 
-var test = nl.run(spec);
+var test = stress.run(spec);
 
 test.on('start', function(tests) { testStart = +new Date(); });
 test.on('update', function(interval, stats) {
