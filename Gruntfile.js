@@ -7,12 +7,12 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
         jshint: {
-            gruntfile: ['Gruntfile.js'],
+            gruntfile   : ['Gruntfile.js'],
             libs_n_tests: ['lib/**/*.js'],
-            options: grunt.file.readJSON(path.join(__dirname,'.jshintrc'))
+            options     : grunt.file.readJSON(path.join(__dirname, '.jshintrc'))
         },
-        watch: {
-            gruntfile: {
+        watch : {
+            gruntfile   : {
                 files: ['<%= jshint.gruntfile %>'],
                 tasks: ['jshint:gruntfile']
             },
@@ -49,9 +49,9 @@ module.exports = function(grunt) {
         var summary = fs.openSync('lib/reporting/summary.tpl.js', 'a'),
             dygraph = fs.openSync('lib/reporting/dygraph.tpl.js', 'a');
         grunt.util.async.waterfall([
-            function(done){
+            function(done) {
                 grunt.util.spawn({
-                    cmd: 'node',
+                    cmd : 'node',
                     args: ['scripts/process_tpl.js', 'REPORT_SUMMARY_TEMPLATE', 'lib/reporting/summary.tpl'],
                     opts: { stdio: ['pipe', summary, 'pipe'] }
                 }, function(error, result) {
@@ -64,9 +64,9 @@ module.exports = function(grunt) {
                     }
                 });
             },
-            function(done){
+            function(done) {
                 grunt.util.spawn({
-                    cmd: 'node',
+                    cmd : 'node',
                     args: ['scripts/process_tpl.js', 'DYGRAPH_SOURCE', 'lib/reporting/dygraph.tpl'],
                     opts: { stdio: ['pipe', dygraph, 'pipe'] }
                 }, function(error, result) {
@@ -80,10 +80,10 @@ module.exports = function(grunt) {
                 });
             }],
 
-            function(err){
+            function(err) {
                 fs.closeSync(summary);
                 fs.closeSync(dygraph);
-                if(err){
+                if (err) {
                     grunt.verbose.warn(err.message);
                     taskComplete(false);
                 } else {
@@ -93,13 +93,13 @@ module.exports = function(grunt) {
             });
     });
 
-    grunt.registerTask('npm-test', 'run npm test', function () {
+    grunt.registerTask('npm-test', 'run npm test', function() {
         var done = this.async();
-        var npmTest = require('child_process').exec('npm test', function (err, stdout) {
+        var npmTest = require('child_process').exec('npm test', function(err, stdout) {
             done(err);
         });
 
-        npmTest.stdout.on('data', function (data) {
+        npmTest.stdout.on('data', function(data) {
             grunt.log.write(data);
         });
 

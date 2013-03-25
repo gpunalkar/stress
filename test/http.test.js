@@ -5,14 +5,14 @@ var assert = require('assert'),
     HttpServer = require('../lib/http').HttpServer,
     originalConfig = config.settings.enableServer;
 
-describe('http', function(){
+describe('http', function() {
     it('example: add a new route', function(complete) {
         config.enableServer(false);
         config.apply();
         var done = false,
             server = new HttpServer();
 
-        server.once('start', function(){
+        server.once('start', function() {
             server.addRoute('^/route', function(url, req, res) {
 
                 config.enableServer(originalConfig);
@@ -28,7 +28,7 @@ describe('http', function(){
 
         server.start(9020);
 
-        after(function(){
+        after(function() {
             server.stop();
             config.enableServer(originalConfig);
         });
@@ -36,7 +36,7 @@ describe('http', function(){
 
     it('test file server finds package.json', function(complete) {
         var server = new HttpServer();
-        server.once('start', function(){
+        server.once('start', function() {
 
             var client = http.createClient(9021, '127.0.0.1'),
                 req = client.request('GET', '/package.json');
@@ -55,7 +55,7 @@ describe('http', function(){
 
         server.start(9021);
 
-        after(function(){
+        after(function() {
             config.enableServer(originalConfig);
             server.stop();
         });

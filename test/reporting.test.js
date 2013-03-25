@@ -10,25 +10,31 @@ var assert = require('assert'),
 
 REPORT_MANAGER.refreshIntervalMs = 500;
 REPORT_MANAGER.setLogFile('.reporting.test-output.html');
-setTimeout(function() { REPORT_MANAGER.setLoggingEnabled(false); }, 1000);
+setTimeout(function() {
+    REPORT_MANAGER.setLoggingEnabled(false);
+}, 1000);
 
 function mockConnection(callback) {
-    var conn = { 
-        operation: function(opcallback) { 
-            setTimeout(function() { opcallback(); }, 25);
+    var conn = {
+        operation: function(opcallback) {
+            setTimeout(function() {
+                opcallback();
+            }, 25);
         }
     };
-    setTimeout(function() { callback(conn); }, 75);
+    setTimeout(function() {
+        callback(conn);
+    }, 75);
 }
 
-describe('reporting', function(){
+describe('reporting', function() {
     "use strict";
 
-    beforeEach(function(){
+    beforeEach(function() {
         config.quiet();
     });
 
-    afterEach(function(){
+    afterEach(function() {
         config.quiet(originalQuietConfig);
     });
 
@@ -37,23 +43,23 @@ describe('reporting', function(){
         var report = REPORT_MANAGER.addReport('My Report'),
             chart1 = report.getChart('Chart 1'),
             chart2 = report.getChart('Chart 2');
-        
+
         chart1.put({'line 1': 1, 'line 2': -1});
         chart1.put({'line 1': 2, 'line 2': -2});
         chart1.put({'line 1': 3, 'line 2': -3});
-        
+
         chart2.put({'line 1': 10, 'line 2': -10});
         chart2.put({'line 1': 11, 'line 2': -11});
         chart2.put({'line 1': 12, 'line 2': -12});
-        
+
         report.summary = {
-            "statistic 1" : 500,
-            "statistic 2" : 'text',
+            "statistic 1": 500,
+            "statistic 2": 'text',
         };
-        
+
         var html = REPORT_MANAGER.getHtml();
-        assert.notEqual(null, html.match('name":"'+chart1.name));
-        assert.notEqual(null, html.match('name":"'+chart2.name));
+        assert.notEqual(null, html.match('name":"' + chart1.name));
+        assert.notEqual(null, html.match('name":"' + chart2.name));
         assert.notEqual(null, html.match('summary":'));
 
         config.enableServer(originalEnableServerConfig);
@@ -64,7 +70,7 @@ describe('reporting', function(){
     it('example: update reports from Monitor and MonitorGroup stats', function(done) {
         config.enableServer(false);
         var m = new monitoring.MonitorGroup('runtime')
-                        .initMonitors('transaction', 'operation'),
+                .initMonitors('transaction', 'operation'),
             f = function() {
                 var trmon = m.start('transaction');
                 mockConnection(function(conn) {
@@ -75,23 +81,27 @@ describe('reporting', function(){
                     });
                 });
             };
-            
+
         m.updateInterval = 200;
-        
+
         REPORT_MANAGER.addReport('All Monitors').updateFromMonitorGroup(m);
         REPORT_MANAGER.addReport('Transaction').updateFromMonitor(m.monitors['transaction']);
         REPORT_MANAGER.addReport('Operation').updateFromMonitor(m.monitors['operation']);
-    
+
         for (var i = 1; i <= 10; i++) {
-            setTimeout(f, i*50);
+            setTimeout(f, i * 50);
         }
-    
+
         // Disable 'update' events after 500ms so that this test can complete
         setTimeout(function() {
             m.updateInterval = 0;
             config.enableServer(originalEnableServerConfig);
-            var trReport = REPORT_MANAGER.reports.filter(function(r) { return r.name === 'Transaction'; })[0];
-            var opReport = REPORT_MANAGER.reports.filter(function(r) { return r.name === 'Operation'; })[0];
+            var trReport = REPORT_MANAGER.reports.filter(function(r) {
+                return r.name === 'Transaction';
+            })[0];
+            var opReport = REPORT_MANAGER.reports.filter(function(r) {
+                return r.name === 'Operation';
+            })[0];
             assert.ok(trReport && (trReport.name === 'Transaction') && trReport.charts['runtime']);
             assert.ok(opReport && (opReport.name === 'Operation') && opReport.charts['runtime']);
 

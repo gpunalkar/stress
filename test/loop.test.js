@@ -3,13 +3,13 @@ var assert = require('assert'),
     Loop = loop.Loop,
     MultiLoop = loop.MultiLoop;
 
-describe('loop', function(){
+describe('loop', function() {
     "use strict";
 
     it('example: a basic rps loop with set duration', function(done) {
         var i = 0, start = new Date(), lasttime = start, duration,
             l = new Loop({
-                fun: function(finished) {
+                fun     : function(finished) {
                     var now = new Date();
 
                     // expect this run to be no greater than 200ms after last run, accounting for 15ms clock speed inadequacy
@@ -19,7 +19,7 @@ describe('loop', function(){
                     i++;
                     finished();
                 },
-                rps: 5, // times per second (every 200ms)
+                rps     : 5, // times per second (every 200ms)
                 duration: 1 // second
             });
 
@@ -37,20 +37,31 @@ describe('loop', function(){
         l.start();
     });
 
-    it('example: use profiles to vary execution rate and concurrency', function (done) {
+    it('example: use profiles to vary execution rate and concurrency', function(done) {
         var i = 0, c = 0, start = new Date(), duration,
             l = new MultiLoop({
-                fun: function(finished) { i++; finished(); },
-                rpsProfile: [[2,10], [3,0]],
-                concurrencyProfile: [[1,5], [2,10]],
-                duration: 3.5
+                fun               : function(finished) {
+                    i++;
+                    finished();
+                },
+                rpsProfile        : [
+                    [2, 10],
+                    [3, 0]
+                ],
+                concurrencyProfile: [
+                    [1, 5],
+                    [2, 10]
+                ],
+                duration          : 3.5
             }).start();
 
         l.on('end', function() {
             duration = new Date() - start;
 
             assert.equal(i, 15, 'loop executed incorrect number of times: ' + i);
-            assert.ok(l.loops.every(function(l) { return !l.running; }), 'loops still flagged as running');
+            assert.ok(l.loops.every(function(l) {
+                return !l.running;
+            }), 'loops still flagged as running');
             assert.ok(Math.abs(duration - 3500) < 500, '3500 == ' + duration);
 
             done();
@@ -60,8 +71,11 @@ describe('loop', function(){
     it('test numberOfTimes loop', function(done) {
         var i = 0,
             l = new Loop({
-                fun: function(finished) { i++; finished(); },
-                rps: 5,
+                fun          : function(finished) {
+                    i++;
+                    finished();
+                },
+                rps          : 5,
                 numberOfTimes: 3
             }).start();
 
@@ -74,12 +88,16 @@ describe('loop', function(){
     it('test emits start and stop events', function(done) {
         var started, ended,
             l = new Loop({
-                fun: function(finished) { finished(); },
-                rps: 10,
+                fun          : function(finished) {
+                    finished();
+                },
+                rps          : 10,
                 numberOfTimes: 3
             }).start();
 
-        l.on('start', function() { started = true; });
+        l.on('start', function() {
+            started = true;
+        });
         l.on('end', function() {
             assert.ok(started, 'start never emitted');
             done();
@@ -89,9 +107,12 @@ describe('loop', function(){
     it('test concurrency', function(done) {
         var i = 0, start = new Date(), duration,
             l = new MultiLoop({
-                fun: function(finished) { i++; finished(); },
-                rps: 10,
-                duration: 1,
+                fun        : function(finished) {
+                    i++;
+                    finished();
+                },
+                rps        : 10,
+                duration   : 1,
                 concurrency: 5
             }).start();
 
@@ -100,7 +121,9 @@ describe('loop', function(){
 
             assert.equal(l.loops.length, 5);
             assert.equal(i, 10, 'loop executed incorrect number of times');
-            assert.ok(l.loops.every(function(l){ return !l.running; }), 'loops still flagged as running');
+            assert.ok(l.loops.every(function(l) {
+                return !l.running;
+            }), 'loops still flagged as running');
             assert.ok(Math.abs(duration - 1000) < 30, '1000 == ' + duration);
 
             done();
@@ -110,11 +133,15 @@ describe('loop', function(){
     it('MultiLoop emits events', function(done) {
         var started = false, ended = false,
             l = new MultiLoop({
-                fun: function(finished) { finished(); },
+                fun          : function(finished) {
+                    finished();
+                },
                 numberOfTimes: 3
             }).start();
 
-        l.on('start', function() { started = true; });
+        l.on('start', function() {
+            started = true;
+        });
         l.on('end', function() {
             ended = true;
 
@@ -126,11 +153,11 @@ describe('loop', function(){
     it('change loop rate', function(done) {
         var i = 0, start = new Date(), duration,
             l = new Loop({
-                fun: function(finished) {
+                fun     : function(finished) {
                     i++;
                     finished();
                 },
-                rps: 5,
+                rps     : 5,
                 duration: 2
             }).start();
 
@@ -143,8 +170,12 @@ describe('loop', function(){
 
             done();
         });
-        setTimeout(function() { l.rps = 10; }, 1000);
-        setTimeout(function() { l.rps = 20; }, 1500);
+        setTimeout(function() {
+            l.rps = 10;
+        }, 1000);
+        setTimeout(function() {
+            l.rps = 20;
+        }, 1500);
 
     });
 
@@ -154,13 +185,33 @@ describe('loop', function(){
         assert.equal(getProfileValue(null, 10), 0);
         assert.equal(getProfileValue([], 10), 0);
 
-        assert.equal(getProfileValue([[0,0]], 0), 0);
-        assert.equal(getProfileValue([[0,10]], 0), 10);
-        assert.equal(getProfileValue([[0,0],[10,0]], 5), 0);
-        assert.equal(getProfileValue([[0,0],[10,100]], 5), 50);
-        assert.equal(getProfileValue([[0,0],[11,100]], 5), 45);
+        assert.equal(getProfileValue([
+            [0, 0]
+        ], 0), 0);
+        assert.equal(getProfileValue([
+            [0, 10]
+        ], 0), 10);
+        assert.equal(getProfileValue([
+            [0, 0],
+            [10, 0]
+        ], 5), 0);
+        assert.equal(getProfileValue([
+            [0, 0],
+            [10, 100]
+        ], 5), 50);
+        assert.equal(getProfileValue([
+            [0, 0],
+            [11, 100]
+        ], 5), 45);
 
-        var profile = [[0,0],[10,100],[15,100],[22,500],[30,500],[32,0]];
+        var profile = [
+            [0, 0],
+            [10, 100],
+            [15, 100],
+            [22, 500],
+            [30, 500],
+            [32, 0]
+        ];
         assert.equal(getProfileValue(profile, -1), 0);
         assert.equal(getProfileValue(profile, 0), 0);
         assert.equal(getProfileValue(profile, 1), 10);
@@ -179,16 +230,45 @@ describe('loop', function(){
         assert.equal(getProfileTimeToNextValue(null, 10), Infinity);
         assert.equal(getProfileTimeToNextValue([], 10), Infinity);
 
-        assert.equal(getProfileTimeToNextValue([[0,10]], 0), Infinity);
-        assert.equal(getProfileTimeToNextValue([[0,0],[10,0]], 0), 10);
-        assert.equal(getProfileTimeToNextValue([[0,0],[10,100]], 0), 1);
-        assert.equal(getProfileTimeToNextValue([[0,0],[10,0]], 4), 6);
-        assert.equal(getProfileTimeToNextValue([[0,0],[10,5]], 4), 2);
-        assert.equal(getProfileTimeToNextValue([[0,0],[10,5]], 4.5), 2); // should round up to nearest whole number
-        assert.equal(getProfileTimeToNextValue([[0,0],[10,5]], 5), 1);
-        assert.equal(getProfileTimeToNextValue([[0,0],[10,0]], 10), Infinity);
+        assert.equal(getProfileTimeToNextValue([
+            [0, 10]
+        ], 0), Infinity);
+        assert.equal(getProfileTimeToNextValue([
+            [0, 0],
+            [10, 0]
+        ], 0), 10);
+        assert.equal(getProfileTimeToNextValue([
+            [0, 0],
+            [10, 100]
+        ], 0), 1);
+        assert.equal(getProfileTimeToNextValue([
+            [0, 0],
+            [10, 0]
+        ], 4), 6);
+        assert.equal(getProfileTimeToNextValue([
+            [0, 0],
+            [10, 5]
+        ], 4), 2);
+        assert.equal(getProfileTimeToNextValue([
+            [0, 0],
+            [10, 5]
+        ], 4.5), 2); // should round up to nearest whole number
+        assert.equal(getProfileTimeToNextValue([
+            [0, 0],
+            [10, 5]
+        ], 5), 1);
+        assert.equal(getProfileTimeToNextValue([
+            [0, 0],
+            [10, 0]
+        ], 10), Infinity);
 
-        var profile = [[0,0],[10,100],[15,100],[22,1],[30,0]];
+        var profile = [
+            [0, 0],
+            [10, 100],
+            [15, 100],
+            [22, 1],
+            [30, 0]
+        ];
         assert.equal(getProfileTimeToNextValue(profile, -1), 1);
         assert.equal(getProfileTimeToNextValue(profile, 0), 1);
         assert.equal(getProfileTimeToNextValue(profile, 1), 1);
@@ -206,7 +286,14 @@ describe('loop', function(){
     it('test MultiLoop.getProfileValue_ and MultiLoop.getProfileTimeToNextValue_ coordination', function() {
         var getProfileValue = loop.MultiLoop.prototype.getProfileValue_;
         var getProfileTimeToNextValue = loop.MultiLoop.prototype.getProfileTimeToNextValue_;
-        var profile = [[0,0],[10,100],[15,100],[22,500],[30,500],[32,0]];
+        var profile = [
+            [0, 0],
+            [10, 100],
+            [15, 100],
+            [22, 500],
+            [30, 500],
+            [32, 0]
+        ];
         assert.equal(getProfileValue(profile, 0), 0);
         assert.equal(getProfileTimeToNextValue(profile, 0), 1);
         assert.equal(getProfileValue(profile, 1), 10);

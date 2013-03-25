@@ -13,27 +13,27 @@ var hostAndPort = 'localhost:9999',
     refreshInterval = 2;
 
 var jmx = reporting.graphJmx({
-    host: 'localhost:9999',
-    reportName: 'Monitors',
-    chartName: 'Heap',
-    mbeans: {
-        'Used': 'java.lang:type=Memory[HeapMemoryUsage.used]',
+    host         : 'localhost:9999',
+    reportName   : 'Monitors',
+    chartName    : 'Heap',
+    mbeans       : {
+        'Used'     : 'java.lang:type=Memory[HeapMemoryUsage.used]',
         'Committed': 'java.lang:type=Memory[HeapMemoryUsage.committed]'
     },
     dataFormatter: function(data) {
         return {
-            Used: data.Used / 1024,
+            Used     : data.Used / 1024,
             Committed: data.Committed /= 1024
         };
     },
-    interval: refreshInterval
+    interval     : refreshInterval
 });
 
 reporting.graphProcess({
     reportName: 'Monitors',
-    chartName: 'CPU (iostat)',
-    command: 'iostat -C ' + refreshInterval,
-    columns: [null, null, null, 'tps', 'MB/s'],
+    chartName : 'CPU (iostat)',
+    command   : 'iostat -C ' + refreshInterval,
+    columns   : [null, null, null, 'tps', 'MB/s'],
 });
 
 jmx.stderr.on('data', function(data) {

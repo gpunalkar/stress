@@ -5,13 +5,13 @@ var mocha = require('mocha'),
     path = require('path'),
     baseOutputDir = path.join(process.env.HOME, '.config/stress');
 
-beforeEach(function(){
+beforeEach(function() {
     config.reset();
 });
 
-describe('Configuration', function(){
-    describe('default settings', function(){
-        it('should not surprise us with unexpected defaults...', function(done){
+describe('Configuration', function() {
+    describe('default settings', function() {
+        it('should not surprise us with unexpected defaults...', function(done) {
             // If these values change, docs MUST be updated
             assert.equal(80, config.settings.port);
             assert.equal(false, config.settings.quiet);
@@ -27,10 +27,10 @@ describe('Configuration', function(){
         });
     });
 
-    describe('Changes should emit for...', function(){
-        it('port', function(done){
+    describe('Changes should emit for...', function() {
+        it('port', function(done) {
             var original = config.settings.port;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('port', setting);
                 assert.equal(original, o);
                 assert.equal(8080, n);
@@ -41,9 +41,9 @@ describe('Configuration', function(){
             config.port(original); // back to default
         });
 
-        it('quiet', function(done){
+        it('quiet', function(done) {
             var original = config.settings.quiet;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('quiet', setting);
                 assert.equal(original, o);
                 assert.equal(!original, n);
@@ -54,9 +54,9 @@ describe('Configuration', function(){
             config.quiet(original); // back to default
         });
 
-        it('lazy', function(done){
+        it('lazy', function(done) {
             var original = config.settings.lazy;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('lazy', setting);
                 assert.equal(original, o);
                 assert.equal(!original, n);
@@ -67,9 +67,9 @@ describe('Configuration', function(){
             config.lazy(original); // back to default
         });
 
-        it('enableServer', function(done){
+        it('enableServer', function(done) {
             var original = config.settings.enableServer;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('enableServer', setting);
                 assert.equal(original, o);
                 assert.equal(!original, n);
@@ -80,9 +80,9 @@ describe('Configuration', function(){
             config.enableServer(original); // back to default
         });
 
-        it('monitorInterval', function(done){
+        it('monitorInterval', function(done) {
             var original = config.settings.monitorInterval;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('monitorInterval', setting);
                 assert.equal(original, o);
                 assert.equal(3000, n);
@@ -93,9 +93,9 @@ describe('Configuration', function(){
             config.monitorInterval(original); // back to default
         });
 
-        it('refreshInterval', function(done){
+        it('refreshInterval', function(done) {
             var original = config.settings.refreshInterval;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('refreshInterval', setting);
                 assert.equal(original, o);
                 assert.equal(5000, n);
@@ -106,9 +106,9 @@ describe('Configuration', function(){
             config.refreshInterval(original); // back to default
         });
 
-        it('logsEnabled', function(done){
+        it('logsEnabled', function(done) {
             var original = config.settings.logsEnabled;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('logsEnabled', setting);
                 assert.equal(original, o);
                 assert.equal(!original, n);
@@ -119,9 +119,9 @@ describe('Configuration', function(){
             config.logsEnabled(original); // back to default
         });
 
-        it('slaveUpdateInterval', function(done){
+        it('slaveUpdateInterval', function(done) {
             var original = config.settings.slaveUpdateInterval;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('slaveUpdateInterval', setting);
                 assert.equal(original, o);
                 assert.equal(9898, n);
@@ -132,9 +132,9 @@ describe('Configuration', function(){
             config.slaveUpdateInterval(original); // back to default
         });
 
-        it('baseDirectory', function(done){
+        it('baseDirectory', function(done) {
             var original = config.settings.baseDirectory;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('baseDirectory', setting);
                 assert.equal(original, o);
                 assert.equal('~/something', n);
@@ -147,11 +147,11 @@ describe('Configuration', function(){
         });
     });
 
-    describe('Changed values should coerce to defaults when invalid for...', function(){
+    describe('Changed values should coerce to defaults when invalid for...', function() {
 
-        it('port', function(done){
+        it('port', function(done) {
             var original = config.settings.port;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('port', setting);
                 assert.equal(original, o);
                 assert.equal(original, n);
@@ -162,12 +162,12 @@ describe('Configuration', function(){
             config.port(original); // back to default
         });
 
-        it('quiet', function(done){
+        it('quiet', function(done) {
             // config.settings.quiet defaults to false
             // but, config.quiet() means to set to true.
             // This is what happens with config.quiet(invalidValue)
             var original = config.settings.quiet;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('quiet', setting);
                 assert.equal(original, o);
                 assert.equal(!original, n);
@@ -178,9 +178,9 @@ describe('Configuration', function(){
             config.quiet(original); // back to default
         });
 
-        it('lazy', function(done){
+        it('lazy', function(done) {
             var original = config.settings.lazy;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('lazy', setting);
                 assert.equal(original, o);
                 assert.equal(original, n);
@@ -191,9 +191,9 @@ describe('Configuration', function(){
             config.lazy(original); // back to default
         });
 
-        it('enableServer', function(done){
+        it('enableServer', function(done) {
             var original = config.settings.enableServer;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('enableServer', setting);
                 assert.equal(original, o);
                 assert.equal(true, n);
@@ -204,9 +204,9 @@ describe('Configuration', function(){
             config.enableServer(original); // back to default
         });
 
-        it('monitorInterval', function(done){
+        it('monitorInterval', function(done) {
             var original = config.settings.monitorInterval;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('monitorInterval', setting);
                 assert.equal(original, o);
                 assert.equal(250, n);
@@ -217,9 +217,9 @@ describe('Configuration', function(){
             config.monitorInterval(original); // back to default
         });
 
-        it('refreshInterval', function(done){
+        it('refreshInterval', function(done) {
             var original = config.settings.refreshInterval;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('refreshInterval', setting);
                 assert.equal(original, o);
                 assert.equal(250, n);
@@ -230,9 +230,9 @@ describe('Configuration', function(){
             config.refreshInterval(original); // back to default
         });
 
-        it('logsEnabled', function(done){
+        it('logsEnabled', function(done) {
             var original = config.settings.logsEnabled;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('logsEnabled', setting);
                 assert.equal(original, o);
                 assert.equal(!original, n);
@@ -243,9 +243,9 @@ describe('Configuration', function(){
             config.logsEnabled(original); // back to default
         });
 
-        it('slaveUpdateInterval', function(done){
+        it('slaveUpdateInterval', function(done) {
             var original = config.settings.slaveUpdateInterval;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('slaveUpdateInterval', setting);
                 assert.equal(original, o);
                 assert.equal(9898, n);
@@ -256,9 +256,9 @@ describe('Configuration', function(){
             config.slaveUpdateInterval(original); // back to default
         });
 
-        it('baseDirectory', function(done){
+        it('baseDirectory', function(done) {
             var original = config.settings.baseDirectory;
-            config.once('change', function(setting, o, n){
+            config.once('change', function(setting, o, n) {
                 assert.equal('baseDirectory', setting);
                 assert.equal(original, o);
                 assert.equal('~/something', n);

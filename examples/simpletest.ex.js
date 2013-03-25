@@ -8,29 +8,28 @@ var http = require('http');
 var stress = require('../'),
     Spec = stress.Spec;
 console.log("Test server on localhost:9000.");
-http.createServer(function (req, res) {
+http.createServer(function(req, res) {
     res.writeHead((Math.random() < 0.8) ? 200 : 404, {'Content-Type': 'text/plain'});
     res.end('foo\n');
 }).listen(9000);
 
-
 stress.run(new Spec({
-    name: "Read",
-    host: 'localhost',
-    port: 9000,
-    numUsers: 10,
-    timeLimit: 600,
-    targetRps: 500,
+    name             : "Read",
+    host             : 'localhost',
+    port             : 9000,
+    numUsers         : 10,
+    timeLimit        : 600,
+    targetRps        : 500,
     requestsPerSecond: 500,
-    stats: [
-        'result-codes', 
+    stats            : [
+        'result-codes',
         { name: 'latency', percentiles: [0.9, 0.99] },
         'concurrency',
         'rps',
         'uniques',
-        { name: 'http-errors', successCodes: [200,404], log: 'http-errors.log' }
+        { name: 'http-errors', successCodes: [200, 404], log: 'http-errors.log' }
     ],
-    requestGenerator: function(client) {
-        return client.request('GET', "/" + Math.floor(Math.random()*8000), { 'host': 'localhost' });
+    requestGenerator : function(client) {
+        return client.request('GET', "/" + Math.floor(Math.random() * 8000), { 'host': 'localhost' });
     }
 }));

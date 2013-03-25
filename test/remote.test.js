@@ -6,15 +6,15 @@ var assert = require('assert'),
     HttpServer = require('../lib/http').HttpServer,
     Cluster = remote.Cluster;
 
-describe('remote', function(){
+describe('remote', function() {
     "use strict";
 
     it('basic end-to-end cluster test', function(done) {
         config.enableServer(false);
         var testTimeout, cluster,
             masterSetupCalled, slaveSetupCalled = [], slaveFunCalled = [],
-            master = new HttpServer().start(9030), 
-            slave1 = new HttpServer().start(9031), 
+            master = new HttpServer().start(9030),
+            slave1 = new HttpServer().start(9031),
             slave2 = new HttpServer().start(9032),
             stopAll = function() {
                 cluster.on('end', function() {
@@ -24,45 +24,45 @@ describe('remote', function(){
                 });
                 cluster.end();
             };
-        
+
         remote.installRemoteHandler(master);
         remote.installRemoteHandler(slave1);
         remote.installRemoteHandler(slave2);
-        
+
         cluster = new Cluster({
-                master: {
-                    setup: function(slaves) {
-                        assert.ok(slaves);
-                        masterSetupCalled = true;
-                    },
-                    slaveSetupCalled: function(slaves, slaveId) {
-                        assert.ok(slaves);
-                        assert.ok(slaveId);
-                        slaveSetupCalled.push(slaveId);
-                    },
-                    slaveFunCalled: function(slaves, slaveId, data) { 
-                        assert.ok(slaves);
-                        assert.ok(slaveId);
-                        assert.equal(data, 'data for master');
-                        slaveFunCalled.push(slaveId);
-                    },
+            master      : {
+                setup           : function(slaves) {
+                    assert.ok(slaves);
+                    masterSetupCalled = true;
                 },
-                slaves: {
-                    hosts: ['localhost:9031', 'localhost:9032'],
-                    setup: function(master) {
-                        this.assert = require('assert');
-                        this.assert.ok(master);
-                        master.slaveSetupCalled();
-                    },
-                    slaveFun: function(master, data) {
-                        this.assert.ok(master);
-                        this.assert.equal(data, 'data for slaves');
-                        master.slaveFunCalled('data for master');
-                    }
+                slaveSetupCalled: function(slaves, slaveId) {
+                    assert.ok(slaves);
+                    assert.ok(slaveId);
+                    slaveSetupCalled.push(slaveId);
                 },
-                pingInterval: 250,
-                server: master
-            });
+                slaveFunCalled  : function(slaves, slaveId, data) {
+                    assert.ok(slaves);
+                    assert.ok(slaveId);
+                    assert.equal(data, 'data for master');
+                    slaveFunCalled.push(slaveId);
+                },
+            },
+            slaves      : {
+                hosts   : ['localhost:9031', 'localhost:9032'],
+                setup   : function(master) {
+                    this.assert = require('assert');
+                    this.assert.ok(master);
+                    master.slaveSetupCalled();
+                },
+                slaveFun: function(master, data) {
+                    this.assert.ok(master);
+                    this.assert.equal(data, 'data for slaves');
+                    master.slaveFunCalled('data for master');
+                }
+            },
+            pingInterval: 250,
+            server      : master
+        });
 
         cluster.on('init', function() {
             cluster.on('start', function() {
@@ -70,13 +70,13 @@ describe('remote', function(){
             });
             cluster.start();
         });
-        
-        testTimeout = setTimeout(function(){
+
+        testTimeout = setTimeout(function() {
             stopAll();
 
             beforeExit();
         }, 500);
-        
+
         var beforeExit = function() {
             config.enableServer(originalConfig);
             assert.ok(masterSetupCalled);

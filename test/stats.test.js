@@ -1,7 +1,7 @@
 var assert = require('assert'),
     stats = require('../lib/stats');
 
-describe('stats', function(){
+describe('stats', function() {
     "use strict";
 
     it('StatsGroup functions are non-enumerable', function(done) {
@@ -11,8 +11,8 @@ describe('stats', function(){
         assert.ok(s.put);
         assert.ok(s.clear);
         assert.ok(s.summary);
-        for (var i in s) { 
-            if (i !== 'latency') { 
+        for (var i in s) {
+            if (i !== 'latency') {
                 assert.fail('Found enumerable property: ' + i);
             }
         }
@@ -34,7 +34,7 @@ describe('stats', function(){
         assert.equal(s.latency.get(1), 1);
         assert.equal(s.results.get(1), 1);
         assert.deepEqual(s.get(1), {latency: 1, results: 1});
-        
+
         // summary()
         var summary = s.summary();
         assert.ok(summary.latency);
@@ -45,7 +45,7 @@ describe('stats', function(){
         assert.deepEqual(s.summary('results'), s.results.summary());
         assert.equal(summary.name, 'test');
         assert.ok(summary.ts);
-        
+
         // clear()
         s.clear('latency');
         assert.equal(s.latency.length, 0);

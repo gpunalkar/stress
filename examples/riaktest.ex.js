@@ -20,15 +20,15 @@ function riakUpdate(loopFun, client, url, body) {
         if (res.statusCode !== 200 && res.statusCode !== 404) {
             loopFun({req: req, res: res});
         } else {
-            var headers = { 
-                'host': 'localhost', 
-                'content-type': 'text/plain', 
+            var headers = {
+                'host'            : 'localhost',
+                'content-type'    : 'text/plain',
                 'x-riak-client-id': 'bmxpYg=='
-                };
+            };
             if (res.headers['x-riak-vclock']) {
                 headers['x-riak-vclock'] = res.headers['x-riak-vclock'];
             }
-                
+
             req = client.request('PUT', url, headers);
             req.on('response', function(res) {
                 loopFun({req: req, res: res});
@@ -39,15 +39,15 @@ function riakUpdate(loopFun, client, url, body) {
     req.end();
 }
 
-var i=0;
+var i = 0;
 var loadData = nl.run({
-    name: "Load Data",
-    host: 'localhost',
-    port: 8098,
-    numUsers: 20,
+    name       : "Load Data",
+    host       : 'localhost',
+    port       : 8098,
+    numUsers   : 20,
     numRequests: 2000,
-    timeLimit: Infinity,
-    stats: ['result-codes', 'latency', 'concurrency', 'uniques', { name: 'http-errors', successCodes: [204], log: 'http-errors.log' }],
+    timeLimit  : Infinity,
+    stats      : ['result-codes', 'latency', 'concurrency', 'uniques', { name: 'http-errors', successCodes: [204], log: 'http-errors.log' }],
     requestLoop: function(loopFun, client) {
         riakUpdate(loopFun, client, '/riak/b/o' + i++, 'original value');
     }
@@ -55,34 +55,41 @@ var loadData = nl.run({
 
 loadData.on('end', function() {
     console.log("Running read + update test.");
-    
+
     var reads = {
-            name: "Read",
-            host: 'localhost',
-            port: 8098,
-            numUsers: 30,
-            loadProfile: [[0,0],[20,270],[300,270],[480,370],[590,400],[599,0]], // Ramp up to 270, then up to 370, then down to 0
-            timeLimit: 600,
-            stats: ['result-codes', 'latency', 'concurrency', 'uniques', { name: 'http-errors', successCodes: [200,404], log: 'http-errors.log' }],
+            name            : "Read",
+            host            : 'localhost',
+            port            : 8098,
+            numUsers        : 30,
+            loadProfile     : [
+                [0, 0],
+                [20, 270],
+                [300, 270],
+                [480, 370],
+                [590, 400],
+                [599, 0]
+            ], // Ramp up to 270, then up to 370, then down to 0
+            timeLimit       : 600,
+            stats           : ['result-codes', 'latency', 'concurrency', 'uniques', { name: 'http-errors', successCodes: [200, 404], log: 'http-errors.log' }],
             requestGenerator: function(client) {
-                var url = '/riak/b/o' + Math.floor(Math.random()*8000);
+                var url = '/riak/b/o' + Math.floor(Math.random() * 8000);
                 return client.request('GET', url, { 'host': 'localhost' });
             }
         },
         writes = {
-            name: "Write",
-            host: 'localhost',
-            port: 8098,
-            numUsers: 5,
-            timeLimit: 600,
-            targetRps: 30,
+            name          : "Write",
+            host          : 'localhost',
+            port          : 8098,
+            numUsers      : 5,
+            timeLimit     : 600,
+            targetRps     : 30,
             reportInterval: 2,
-            stats: ['result-codes', 'latency', 'concurrency', 'uniques', { name: 'http-errors', successCodes: [204], log: 'http-errors.log' }],
-            requestLoop: function(loopFun, client) {
-                var url = '/riak/b/o' + Math.floor(Math.random()*8000);
+            stats         : ['result-codes', 'latency', 'concurrency', 'uniques', { name: 'http-errors', successCodes: [204], log: 'http-errors.log' }],
+            requestLoop   : function(loopFun, client) {
+                var url = '/riak/b/o' + Math.floor(Math.random() * 8000);
                 riakUpdate(loopFun, client, url, 'updated value');
             }
         };
-    
+
     nl.run(reads, writes);
 });

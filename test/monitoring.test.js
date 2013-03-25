@@ -12,22 +12,26 @@ var assert = require('assert'),
 function mockConnection(callback) {
     var conn = {
         operation: function(opcallback) {
-            setTimeout(function() { opcallback(); }, 25);
+            setTimeout(function() {
+                opcallback();
+            }, 25);
         }
     };
-    setTimeout(function() { callback(conn); }, 75);
+    setTimeout(function() {
+        callback(conn);
+    }, 75);
 }
 
-describe('monitoring', function(){
+describe('monitoring', function() {
     "use strict";
 
-    beforeEach(function(done){
+    beforeEach(function(done) {
         "use strict";
-        svr = http.createServer(function (req, res) {
+        svr = http.createServer(function(req, res) {
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end(req.url);
         });
-        svr.listen(8003, 'localhost', function(){
+        svr.listen(8003, 'localhost', function() {
             done();
         });
     });
@@ -52,7 +56,7 @@ describe('monitoring', function(){
             f();
         }
 
-        setTimeout(function(){
+        setTimeout(function() {
             var summary = m.stats['runtime'] && m.stats['runtime'].summary();
             assert.ok(summary);
             assert.equal(m.stats['runtime'].length, 20);
@@ -82,7 +86,7 @@ describe('monitoring', function(){
             f();
         }
 
-        setTimeout(function(){
+        setTimeout(function() {
             var summary = m.interval.summary();
             assert.ok(summary);
             assert.ok(summary['transaction'] && summary['transaction']['runtime']);
@@ -109,6 +113,7 @@ describe('monitoring', function(){
                 });
             };
         }
+
         MonitoredObject.prototype.__proto__ = EventEmitter.prototype;
 
         var m = new MonitorGroup('runtime');
@@ -131,16 +136,18 @@ describe('monitoring', function(){
         }, 1000);
     });
 
-
     it('use EventEmitter objects with Monitor', function(done) {
         function MonitoredObject() {
             EventEmitter.call(this);
             var self = this;
             self.run = function() {
                 self.emit('start');
-                setTimeout(function() { self.emit('end'); }, Math.floor(Math.random() * 100));
+                setTimeout(function() {
+                    self.emit('end');
+                }, Math.floor(Math.random() * 100));
             };
         }
+
         MonitoredObject.prototype.__proto__ = EventEmitter.prototype;
 
         var m = new Monitor('runtime');
@@ -159,7 +166,7 @@ describe('monitoring', function(){
             assert.ok(summary.median > 0 && summary.median < 100, summary.median.toString());
 
             done();
-        },1000);
+        }, 1000);
     });
 
     it('HTTP specific monitors', function(done) {
@@ -214,18 +221,22 @@ describe('monitoring', function(){
             intervals = 0,
             f = function() {
                 var ctx = m.start(), runtime = Math.floor(Math.random() * 10);
-                setTimeout(function() { ctx.end(); }, runtime);
+                setTimeout(function() {
+                    ctx.end();
+                }, runtime);
             };
 
         m.updateInterval = 220;
 
         // Call to f every 100ms for a total runtime >500ms
         for (var i = 1; i <= 5; i++) {
-            setTimeout(f, i*100);
+            setTimeout(f, i * 100);
         }
 
         // Disable 'update' events after 500ms so that this test can complete
-        setTimeout(function() { m.updateInterval = 0; }, 510);
+        setTimeout(function() {
+            m.updateInterval = 0;
+        }, 510);
 
         m.on('update', function(interval, overall) {
             assert.strictEqual(overall, m.stats);

@@ -37,7 +37,7 @@ if (process.argv.length < 3) {
         '\n',
         '   $ HTTP_PORT=8001 nodeload.js\n',
     ].join(''));
-    
+
     slave = new HttpServer().start(8001);
     remote.installRemoteHandler(slave);
     remoteHost = 'localhost:8001';
@@ -45,11 +45,9 @@ if (process.argv.length < 3) {
     remoteHost = process.argv[2];
 }
 
-
 // Initialize the HTML report
 var report = REPORT_MANAGER.addReport(remoteHost),
     cpuChart = report.getChart('CPU usage');
-
 
 // Create the Cluster...
 //
@@ -68,9 +66,9 @@ var cluster = new Cluster({
             var parts = output.trim().split(/\s+/);
             if (parts.length > 5) {
                 cpuChart.put({
-                    user: parseFloat(parts[3]),
+                    user  : parseFloat(parts[3]),
                     system: parseFloat(parts[4]),
-                    idle: parseFloat(parts[5])
+                    idle  : parseFloat(parts[5])
                 });
             }
         }
@@ -83,7 +81,7 @@ var cluster = new Cluster({
                 console.log('Error communicating with master: ' + err.toString());
             });
         },
-        exec: function(master, cmd, params) {
+        exec : function(master, cmd, params) {
             var self = this,
                 child = self.spawn(cmd, params);
 
@@ -138,6 +136,6 @@ cluster.on('init', function() {
     });
     cluster.start();
 });
-process.on('SIGINT', function () {
+process.on('SIGINT', function() {
     cluster.end();
 });
