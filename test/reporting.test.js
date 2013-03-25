@@ -20,8 +20,10 @@ function mockConnection(callback) {
     setTimeout(function() { callback(conn); }, 75);
 }
 
-module.exports = {
-    'example: add a chart to test summary webpage': function(beforeExit) {
+describe('reporting', function(){
+    "use strict";
+
+    it('example: add a chart to test summary webpage', function(done) {
         config.enableServer(false);
         var report = REPORT_MANAGER.addReport('My Report'),
             chart1 = report.getChart('Chart 1'),
@@ -41,15 +43,16 @@ module.exports = {
         };
         
         var html = REPORT_MANAGER.getHtml();
-        assert.isNotNull(html.match('name":"'+chart1.name));
-        assert.isNotNull(html.match('name":"'+chart2.name));
-        assert.isNotNull(html.match('summary":'));
+        assert.notEqual(null, html.match('name":"'+chart1.name));
+        assert.notEqual(null, html.match('name":"'+chart2.name));
+        assert.notEqual(null, html.match('summary":'));
 
-        beforeExit(function(){
-            config.enableServer(originalConfig);
-        });
-    },
-    'example: update reports from Monitor and MonitorGroup stats': function(beforeExit) {
+        config.enableServer(originalConfig);
+
+        done();
+    });
+
+    it('example: update reports from Monitor and MonitorGroup stats', function(done) {
         config.enableServer(false);
         var m = new monitoring.MonitorGroup('runtime')
                         .initMonitors('transaction', 'operation'),
@@ -75,9 +78,8 @@ module.exports = {
         }
     
         // Disable 'update' events after 500ms so that this test can complete
-        setTimeout(function() { m.updateInterval = 0; }, 510);
-        
-        beforeExit(function() {
+        setTimeout(function() {
+            m.updateInterval = 0;
             config.enableServer(originalConfig);
             var trReport = REPORT_MANAGER.reports.filter(function(r) { return r.name === 'Transaction'; })[0];
             var opReport = REPORT_MANAGER.reports.filter(function(r) { return r.name === 'Operation'; })[0];
@@ -88,6 +90,7 @@ module.exports = {
             assert.ok(trReport.charts['runtime'].rows.length >= 3);    // 1+2, since first row is [[0,...]]
             assert.ok(opReport.charts['runtime'].rows.length >= 3);
             assert.ok(Math.abs(trReport.charts['runtime'].rows[2][3] - 100) < 10); // third column is 'median'
-        });
-    }
-};
+            done();
+        }, 510);
+    });
+});

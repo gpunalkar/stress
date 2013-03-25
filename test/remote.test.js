@@ -6,8 +6,10 @@ var assert = require('assert'),
     HttpServer = require('../lib/http').HttpServer,
     Cluster = remote.Cluster;
 
-module.exports = {
-    'basic end-to-end cluster test': function(beforeExit) {
+describe('remote', function(){
+    "use strict";
+
+    it('basic end-to-end cluster test', function(done) {
         config.enableServer(false);
         var testTimeout, cluster,
             masterSetupCalled, slaveSetupCalled = [], slaveFunCalled = [],
@@ -69,9 +71,13 @@ module.exports = {
             cluster.start();
         });
         
-        testTimeout = setTimeout(stopAll, 500);
+        testTimeout = setTimeout(function(){
+            stopAll();
+
+            beforeExit();
+        }, 500);
         
-        beforeExit(function() {
+        var beforeExit = function() {
             config.enableServer(originalConfig);
             assert.ok(masterSetupCalled);
             assert.equal(slaveSetupCalled.length, 2);
@@ -80,6 +86,9 @@ module.exports = {
             assert.equal(slaveFunCalled.length, 2);
             assert.ok(slaveFunCalled.indexOf('localhost:9031') > -1);
             assert.ok(slaveFunCalled.indexOf('localhost:9032') > -1);
-        });
-    },
-};
+
+            done();
+        };
+    });
+
+});

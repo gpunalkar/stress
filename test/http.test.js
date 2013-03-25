@@ -5,8 +5,8 @@ var assert = require('assert'),
     HttpServer = require('../lib/http').HttpServer,
     originalConfig = config.settings.enableServer;
 
-module.exports = {
-    'example: add a new route': function(beforeExit) {
+describe('http', function(){
+    it('example: add a new route', function(complete) {
         config.enableServer(false);
         config.apply();
         var done = false,
@@ -14,51 +14,54 @@ module.exports = {
 
         server.once('start', function(){
             server.addRoute('^/route', function(url, req, res) {
-                done = true;
+
+                config.enableServer(originalConfig);
+                assert.ok(true, 'Never got request to /route');
                 res.end();
+                complete();
             });
 
             var client = http.createClient(9020, '127.0.0.1'),
-            req = client.request('GET', '/route/item');
+                req = client.request('GET', '/route/item');
             req.end();
         });
 
         server.start(9020);
 
-        setTimeout(function() { server.stop(); }, 2000);
-        
-        beforeExit(function() {
+        setTimeout(function() {
+            server.stop();
             config.enableServer(originalConfig);
-            assert.ok(done, 'Never got request to /route');
-        });
-    },
-    'test file server finds package.json': function(beforeExit) {
-        config.enableServer(false);
-        config.apply();
-        var done = false,
-            server = new HttpServer();
+            assert.fail();
+            complete();
+        }, 2000);
+    });
 
+    it('test file server finds package.json', function(complete) {
+        var server = new HttpServer();
         server.once('start', function(){
 
             var client = http.createClient(9021, '127.0.0.1'),
-            req = client.request('GET', '/package.json');
+                req = client.request('GET', '/package.json');
+
             req.end();
 
             req.on('response', function(res) {
                 assert.equal(res.statusCode, 200);
                 res.on('data', function(chunk) {
-                    done = true;
+                    config.enableServer(originalConfig);
+                    assert.ok(true, 'Never got response data from /package.json');
+                    complete();
                 });
             });
         });
 
         server.start(9021);
 
-        setTimeout(function() { server.stop(); }, 2000);
-
-        beforeExit(function() {
+        setTimeout(function() {
             config.enableServer(originalConfig);
-            assert.ok(done, 'Never got response data from /package.json');
-        });
-    },
-};
+            server.stop();
+            assert.fail();
+            complete();
+        }, 2000);
+    });
+});

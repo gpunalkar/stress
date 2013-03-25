@@ -1,8 +1,10 @@
 var assert = require('assert'),
     stats = require('../lib/stats');
 
-module.exports = {
-    'StatsGroup functions are non-enumerable': function(beforeExit) {
+describe('stats', function(){
+    "use strict";
+
+    it('StatsGroup functions are non-enumerable', function(done) {
         var s = new stats.StatsGroup();
         s.latency = {};
         assert.ok(s.get);
@@ -14,8 +16,11 @@ module.exports = {
                 assert.fail('Found enumerable property: ' + i);
             }
         }
-    },
-    'test StatsGroup methods': function(beforeExit) {
+
+        done();
+    });
+
+    it('test StatsGroup methods', function(done) {
         var s = new stats.StatsGroup();
         s.latency = new stats.Histogram();
         s.results = new stats.ResultsCounter();
@@ -28,16 +33,16 @@ module.exports = {
         s.put(1);
         assert.equal(s.latency.get(1), 1);
         assert.equal(s.results.get(1), 1);
-        assert.eql(s.get(1), {latency: 1, results: 1});
+        assert.deepEqual(s.get(1), {latency: 1, results: 1});
         
         // summary()
         var summary = s.summary();
         assert.ok(summary.latency);
-        assert.isDefined(summary.latency.median);
+        assert.ok(summary.latency.median !== undefined);
         assert.equal(s.summary('latency')['95%'], s.latency.summary()['95%']);
         assert.ok(summary.results);
         assert.equal(summary.results.total, 1);
-        assert.eql(s.summary('results'), s.results.summary());
+        assert.deepEqual(s.summary('results'), s.results.summary());
         assert.equal(summary.name, 'test');
         assert.ok(summary.ts);
         
@@ -47,5 +52,7 @@ module.exports = {
         assert.equal(s.results.length, 1);
         s.clear();
         assert.equal(s.results.length, 0);
-    }
-};
+
+        done();
+    });
+});
