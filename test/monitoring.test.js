@@ -6,14 +6,8 @@ var assert = require('assert'),
     util = require('../lib/util'),
     monitoring = require('../lib/monitoring'),
     Monitor = monitoring.Monitor,
-    MonitorGroup = monitoring.MonitorGroup;
-
-var svr = http.createServer(function (req, res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end(req.url);
-});
-svr.listen(9000);
-setTimeout(function() { svr.close(); }, 2000);
+    MonitorGroup = monitoring.MonitorGroup,
+    svr;
 
 function mockConnection(callback) {
     var conn = {
@@ -24,28 +18,54 @@ function mockConnection(callback) {
     setTimeout(function() { callback(conn); }, 75);
 }
 
-module.exports = {
-    'example: track runtime of a function': function(beforeExit) {
+describe('monitoring', function(){
+    "use strict";
+
+    beforeEach(function(done){
+        "use strict";
+        svr = http.createServer(function (req, res) {
+            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.end(req.url);
+        });
+        svr.listen(8003, 'localhost', function(){
+            done();
+        });
+    });
+
+    afterEach(function(done) {
+        svr.close();
+        setTimeout(done, 250);
+    });
+
+    it('example: track runtime of a function', function(done) {
         var m = new Monitor('runtime'),
             f = function() {
-                var ctx = m.start(), runtime = Math.floor(Math.random() * 100) + 15;
-                setTimeout(function() { ctx.end(); }, runtime);
+                var ctx = m.start(),
+                    runtime = Math.floor(Math.random() * 100) + 15;
+
+                setTimeout(function() {
+                    ctx.end();
+                }, runtime);
             };
 
         for (var i = 0; i < 20; i++) {
             f();
         }
 
-        beforeExit(function() {
+        setTimeout(function(){
             var summary = m.stats['runtime'] && m.stats['runtime'].summary();
             assert.ok(summary);
             assert.equal(m.stats['runtime'].length, 20);
             assert.ok(summary.min >= 0 && summary.min < 115);
             assert.ok(summary.max > 0 && summary.max <= 115);
             assert.ok(summary.median > 0 && summary.median < 115);
-        });
-    },
-    'example: use a MonitorGroup to organize multiple Monitors': function(beforeExit) {
+
+            done();
+        }, 1000);
+
+    });
+
+    it('example: use a MonitorGroup to organize multiple Monitors', function(done) {
         var m = new MonitorGroup('runtime'),
             f = function() {
                 var transactionCtx = m.start('transaction');
@@ -62,16 +82,19 @@ module.exports = {
             f();
         }
 
-        beforeExit(function() {
+        setTimeout(function(){
             var summary = m.interval.summary();
             assert.ok(summary);
             assert.ok(summary['transaction'] && summary['transaction']['runtime']);
             assert.ok(summary['operation'] && summary['operation']['runtime']);
             assert.ok(Math.abs(summary['transaction']['runtime'].median - 100) <= 10, summary['transaction']['runtime'].median.toString());
             assert.ok(Math.abs(summary['operation']['runtime'].median - 25) <= 5);
-        });
-    },
-    'example: use EventEmitter objects instead of interacting with MonitorGroup directly': function(beforeExit) {
+
+            done();
+        }, 1000);
+    });
+
+    it('example: use EventEmitter objects instead of interacting with MonitorGroup directly', function(done) {
         function MonitoredObject() {
             EventEmitter.call(this);
             var self = this;
@@ -95,7 +118,7 @@ module.exports = {
             setTimeout(obj.run, i * 100);
         }
 
-        beforeExit(function() {
+        setTimeout(function() {
             var trSummary = m.stats['transaction'] && m.stats['transaction']['runtime'] && m.stats['transaction']['runtime'].summary();
             var opSummary = m.stats['operation'] && m.stats['operation']['runtime'] && m.stats['operation']['runtime'].summary();
             assert.ok(trSummary);
@@ -103,9 +126,13 @@ module.exports = {
             assert.equal(m.stats['transaction']['runtime'].length, 5);
             assert.ok(Math.abs(trSummary.median - 100) <= 5, '100 == ' + trSummary.median);
             assert.ok(Math.abs(opSummary.median - 25) <= 5, '25 == ' + opSummary.median);
-        });
-    },
-    'use EventEmitter objects with Monitor': function(beforeExit) {
+
+            done();
+        }, 1000);
+    });
+
+
+    it('use EventEmitter objects with Monitor', function(done) {
         function MonitoredObject() {
             EventEmitter.call(this);
             var self = this;
@@ -123,19 +150,22 @@ module.exports = {
             setTimeout(obj.run, i * 100);
         }
 
-        beforeExit(function() {
+        setTimeout(function() {
             var summary = m.stats['runtime'] && m.stats['runtime'].summary();
             assert.ok(summary);
             assert.equal(m.stats['runtime'].length, 5);
             assert.ok(summary.min >= 0 && summary.min < 100, summary.min.toString());
             assert.ok(summary.max > 0 && summary.max <= 100, summary.max.toString());
             assert.ok(summary.median > 0 && summary.median < 100, summary.median.toString());
-        });
-    },
-    'HTTP specific monitors': function(beforeExit) {
+
+            done();
+        },1000);
+    });
+
+    it('HTTP specific monitors', function(done) {
         var q = 0,
             m = new Monitor('result-codes', 'uniques', 'request-bytes', 'response-bytes', {name: 'header-code', header: 'content-type'}),
-            client = http.createClient(9000, 'localhost'),
+            client = http.createClient(8003, 'localhost'),
             f = function() {
                 var ctx = m.start(),
                     path = '/search?q=' + q++,
@@ -151,7 +181,7 @@ module.exports = {
             f();
         }
 
-        beforeExit(function() {
+        setTimeout(function() {
             var resultCodesSummary = m.stats['result-codes'] && m.stats['result-codes'].summary(),
                 uniquesSummary = m.stats['uniques'] && m.stats['uniques'].summary(),
                 requestBytesSummary = m.stats['request-bytes'] && m.stats['request-bytes'].summary(),
@@ -174,9 +204,12 @@ module.exports = {
             assert.ok(requestBytesSummary.total > 0);
 
             assert.ok(responseBytesSummary.total > 20);
-        });
-    },
-    'monitor generates update events with interval and overall stats': function(beforeExit) {
+
+            done();
+        }, 3000);
+    });
+
+    it('monitor generates update events with interval and overall stats', function(done) {
         var m = new Monitor('runtime'),
             intervals = 0,
             f = function() {
@@ -205,11 +238,13 @@ module.exports = {
             intervals++;
         });
 
-        beforeExit(function() {
+        setTimeout(function() {
             assert.equal(intervals, 2, 'Got incorrect number of update events: ' + intervals);
             assert.equal(m.stats['runtime'].length, 5);
-        });
-    }
-};
+
+            done();
+        }, 2000);
+    });
+});
 
 process.setMaxListeners(20);

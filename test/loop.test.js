@@ -3,8 +3,10 @@ var assert = require('assert'),
     Loop = loop.Loop,
     MultiLoop = loop.MultiLoop;
 
-module.exports = {
-    'example: a basic rps loop with set duration': function(beforeExit) {
+describe('loop', function(){
+    "use strict";
+
+    it('example: a basic rps loop with set duration', function(done) {
         var i = 0, start = new Date(), lasttime = start, duration,
             l = new Loop({
                 fun: function(finished) {
@@ -21,19 +23,21 @@ module.exports = {
                 duration: 1 // second
             });
 
-        l.on('end', function() { duration = new Date() - start; });
-
-        l.start();
-
-        beforeExit(function() {
+        l.on('end', function() {
+            duration = new Date() - start;
             assert.equal(i, 5, 'loop executed incorrect number of times: ' + i);
             assert.ok(!l.running, 'loop still flagged as running');
 
             // duration should be within .075s
             assert.ok(Math.abs(duration - 1000) <= 75, '1000 == ' + duration);
+
+            done();
         });
-    },
-    'example: use profiles to vary execution rate and concurrency': function (beforeExit) {
+
+        l.start();
+    });
+
+    it('example: use profiles to vary execution rate and concurrency', function (done) {
         var i = 0, c = 0, start = new Date(), duration,
             l = new MultiLoop({
                 fun: function(finished) { i++; finished(); },
@@ -42,15 +46,18 @@ module.exports = {
                 duration: 3.5
             }).start();
 
-        l.on('end', function() { duration = new Date() - start; });
+        l.on('end', function() {
+            duration = new Date() - start;
 
-        beforeExit(function() {
             assert.equal(i, 15, 'loop executed incorrect number of times: ' + i);
             assert.ok(l.loops.every(function(l) { return !l.running; }), 'loops still flagged as running');
             assert.ok(Math.abs(duration - 3500) < 500, '3500 == ' + duration);
+
+            done();
         });
-    },
-    'test numberOfTimes loop': function(beforeExit) {
+    });
+
+    it('test numberOfTimes loop', function(done) {
         var i = 0,
             l = new Loop({
                 fun: function(finished) { i++; finished(); },
@@ -58,11 +65,13 @@ module.exports = {
                 numberOfTimes: 3
             }).start();
 
-        beforeExit(function() {
+        l.on('end', function() {
             assert.equal(3, i, 'loop executed incorrect number of times');
+            done();
         });
-    },
-    'test emits start and stop events': function(beforeExit) {
+    });
+
+    it('test emits start and stop events', function(done) {
         var started, ended,
             l = new Loop({
                 fun: function(finished) { finished(); },
@@ -71,15 +80,13 @@ module.exports = {
             }).start();
 
         l.on('start', function() { started = true; });
-        l.on('end', function() { ended = true; });
-
-        beforeExit(function() {
+        l.on('end', function() {
             assert.ok(started, 'start never emitted');
-            assert.ok(ended, 'end never emitted');
+            done();
         });
-    },
+    });
 
-    'test concurrency': function(beforeExit) {
+    it('test concurrency', function(done) {
         var i = 0, start = new Date(), duration,
             l = new MultiLoop({
                 fun: function(finished) { i++; finished(); },
@@ -88,16 +95,19 @@ module.exports = {
                 concurrency: 5
             }).start();
 
-        l.on('end', function() { duration = new Date() - start; });
+        l.on('end', function() {
+            duration = new Date() - start;
 
-        assert.equal(l.loops.length, 5);
-        beforeExit(function() {
+            assert.equal(l.loops.length, 5);
             assert.equal(i, 10, 'loop executed incorrect number of times');
             assert.ok(l.loops.every(function(l){ return !l.running; }), 'loops still flagged as running');
             assert.ok(Math.abs(duration - 1000) < 30, '1000 == ' + duration);
+
+            done();
         });
-    },
-    'MultiLoop emits events': function(beforeExit) {
+    });
+
+    it('MultiLoop emits events', function(done) {
         var started = false, ended = false,
             l = new MultiLoop({
                 fun: function(finished) { finished(); },
@@ -105,14 +115,15 @@ module.exports = {
             }).start();
 
         l.on('start', function() { started = true; });
-        l.on('end', function() { ended = true; });
+        l.on('end', function() {
+            ended = true;
 
-        beforeExit(function() {
             assert.ok(started, 'start never emitted');
-            assert.ok(ended, 'end never emitted');
+            done();
         });
-    },
-    'change loop rate': function(beforeExit) {
+    });
+
+    it('change loop rate', function(done) {
         var i = 0, start = new Date(), duration,
             l = new Loop({
                 fun: function(finished) {
@@ -123,17 +134,21 @@ module.exports = {
                 duration: 2
             }).start();
 
-        l.on('end', function() { duration = new Date() - start; });
-        setTimeout(function() { l.rps = 10; }, 1000);
-        setTimeout(function() { l.rps = 20; }, 1500);
+        l.on('end', function() {
+            duration = new Date() - start;
 
-        beforeExit(function() {
             assert.ok(Math.abs(20 - i) <= 1, 'loop executed incorrect number of times: ' + i); // 5+10/2+20/2 == 20
             assert.ok(!l.running, 'loop still flagged as running');
             assert.ok(Math.abs(duration - 2000) <= 50, '2000 == ' + duration);
+
+            done();
         });
-    },
-    'test MultiLoop.getProfileValue_ works': function() {
+        setTimeout(function() { l.rps = 10; }, 1000);
+        setTimeout(function() { l.rps = 20; }, 1500);
+
+    });
+
+    it('test MultiLoop.getProfileValue_ works', function() {
         var getProfileValue = loop.MultiLoop.prototype.getProfileValue_;
         assert.equal(getProfileValue(null, 10), 0);
         assert.equal(getProfileValue(null, 10), 0);
@@ -157,8 +172,9 @@ module.exports = {
         assert.equal(getProfileValue(profile, 31), 250);
         assert.equal(getProfileValue(profile, 32), 0);
         assert.equal(getProfileValue(profile, 35), 0);
-    },
-    'test MultiLoop.getProfileTimeToNextValue_ works': function() {
+    });
+
+    it('test MultiLoop.getProfileTimeToNextValue_ works', function() {
         var getProfileTimeToNextValue = loop.MultiLoop.prototype.getProfileTimeToNextValue_;
         assert.equal(getProfileTimeToNextValue(null, 10), Infinity);
         assert.equal(getProfileTimeToNextValue([], 10), Infinity);
@@ -185,8 +201,9 @@ module.exports = {
         assert.equal(getProfileTimeToNextValue(profile, 28.5), 2);
         assert.equal(getProfileTimeToNextValue(profile, 29.5), 1);
         assert.equal(getProfileTimeToNextValue(profile, 30), Infinity);
-    },
-    'test MultiLoop.getProfileValue_ and MultiLoop.getProfileTimeToNextValue_ coordination': function() {
+    });
+
+    it('test MultiLoop.getProfileValue_ and MultiLoop.getProfileTimeToNextValue_ coordination', function() {
         var getProfileValue = loop.MultiLoop.prototype.getProfileValue_;
         var getProfileTimeToNextValue = loop.MultiLoop.prototype.getProfileTimeToNextValue_;
         var profile = [[0,0],[10,100],[15,100],[22,500],[30,500],[32,0]];
@@ -212,5 +229,6 @@ module.exports = {
         assert.equal(getProfileTimeToNextValue(profile, 31), 1);
         assert.equal(getProfileValue(profile, 32), 0);
         assert.equal(getProfileTimeToNextValue(profile, 32), Infinity);
-    }
-};
+    });
+
+});

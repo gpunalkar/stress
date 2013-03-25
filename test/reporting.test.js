@@ -2,7 +2,8 @@
 
 var assert = require('assert'),
     config = require('../lib/config'),
-    originalConfig = config.settings.enableServer,
+    originalEnableServerConfig = config.settings.enableServer,
+    originalQuietConfig = config.settings.quiet,
     reporting = require('../lib/reporting'),
     monitoring = require('../lib/monitoring'),
     REPORT_MANAGER = reporting.REPORT_MANAGER;
@@ -22,6 +23,14 @@ function mockConnection(callback) {
 
 describe('reporting', function(){
     "use strict";
+
+    beforeEach(function(){
+        config.quiet();
+    });
+
+    afterEach(function(){
+        config.quiet(originalQuietConfig);
+    });
 
     it('example: add a chart to test summary webpage', function(done) {
         config.enableServer(false);
@@ -47,7 +56,7 @@ describe('reporting', function(){
         assert.notEqual(null, html.match('name":"'+chart2.name));
         assert.notEqual(null, html.match('summary":'));
 
-        config.enableServer(originalConfig);
+        config.enableServer(originalEnableServerConfig);
 
         done();
     });
@@ -80,7 +89,7 @@ describe('reporting', function(){
         // Disable 'update' events after 500ms so that this test can complete
         setTimeout(function() {
             m.updateInterval = 0;
-            config.enableServer(originalConfig);
+            config.enableServer(originalEnableServerConfig);
             var trReport = REPORT_MANAGER.reports.filter(function(r) { return r.name === 'Transaction'; })[0];
             var opReport = REPORT_MANAGER.reports.filter(function(r) { return r.name === 'Operation'; })[0];
             assert.ok(trReport && (trReport.name === 'Transaction') && trReport.charts['runtime']);

@@ -42,5 +42,5 @@
     "proto": true,
     "maxstatements": 30,
     "maxerr": 100,
-    "predef": ["describe","it"]
+    "predef": ["describe","it","before","after","beforeEach","afterEach"]
 }

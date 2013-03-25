@@ -26,9 +26,10 @@ module.exports = function(grunt) {
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-mocha-test');
 
     // "npm test" runs these tasks
-    grunt.registerTask('test', ['jshint']);
+    grunt.registerTask('test', ['jshint', 'npm-test']);
 
     // Default task.
     grunt.registerTask('default', ['test', 'clean-templates', 'compile-templates']);
@@ -90,6 +91,18 @@ module.exports = function(grunt) {
                     taskComplete();
                 }
             });
+    });
+
+    grunt.registerTask('npm-test', 'run npm test', function () {
+        var done = this.async();
+        var npmTest = require('child_process').exec('npm test', function (err, stdout) {
+            done(err);
+        });
+
+        npmTest.stdout.on('data', function (data) {
+            grunt.log.write(data);
+        });
+
     });
 
 };

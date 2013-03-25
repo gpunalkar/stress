@@ -28,12 +28,10 @@ describe('http', function(){
 
         server.start(9020);
 
-        setTimeout(function() {
+        after(function(){
             server.stop();
             config.enableServer(originalConfig);
-            assert.fail();
-            complete();
-        }, 2000);
+        });
     });
 
     it('test file server finds package.json', function(complete) {
@@ -57,11 +55,9 @@ describe('http', function(){
 
         server.start(9021);
 
-        setTimeout(function() {
+        after(function(){
             config.enableServer(originalConfig);
             server.stop();
-            assert.fail();
-            complete();
-        }, 2000);
+        });
     });
 });
