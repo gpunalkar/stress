@@ -2,13 +2,13 @@
 var assert = require('assert'),
     http = require('http'),
     config = require('../lib/config'),
-    HttpServer = require('../lib/http').HttpServer;
-
-config.enableServer(false);
-config.apply();
+    HttpServer = require('../lib/http').HttpServer,
+    originalConfig = config.settings.enableServer;
 
 module.exports = {
     'example: add a new route': function(beforeExit) {
+        config.enableServer(false);
+        config.apply();
         var done = false,
             server = new HttpServer();
 
@@ -28,10 +28,13 @@ module.exports = {
         setTimeout(function() { server.stop(); }, 2000);
         
         beforeExit(function() {
+            config.enableServer(originalConfig);
             assert.ok(done, 'Never got request to /route');
         });
     },
     'test file server finds package.json': function(beforeExit) {
+        config.enableServer(false);
+        config.apply();
         var done = false,
             server = new HttpServer();
 
@@ -54,6 +57,7 @@ module.exports = {
         setTimeout(function() { server.stop(); }, 2000);
 
         beforeExit(function() {
+            config.enableServer(originalConfig);
             assert.ok(done, 'Never got response data from /package.json');
         });
     },

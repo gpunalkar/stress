@@ -1,7 +1,8 @@
 /*jslint sub:true */
 
 var assert = require('assert'),
-    nlconfig = require('../lib/config').enableServer(false),
+    config = require('../lib/config'),
+    originalConfig = config.settings.enableServer,
     reporting = require('../lib/reporting'),
     monitoring = require('../lib/monitoring'),
     REPORT_MANAGER = reporting.REPORT_MANAGER;
@@ -21,6 +22,7 @@ function mockConnection(callback) {
 
 module.exports = {
     'example: add a chart to test summary webpage': function(beforeExit) {
+        config.enableServer(false);
         var report = REPORT_MANAGER.addReport('My Report'),
             chart1 = report.getChart('Chart 1'),
             chart2 = report.getChart('Chart 2');
@@ -42,8 +44,13 @@ module.exports = {
         assert.isNotNull(html.match('name":"'+chart1.name));
         assert.isNotNull(html.match('name":"'+chart2.name));
         assert.isNotNull(html.match('summary":'));
+
+        beforeExit(function(){
+            config.enableServer(originalConfig);
+        });
     },
     'example: update reports from Monitor and MonitorGroup stats': function(beforeExit) {
+        config.enableServer(false);
         var m = new monitoring.MonitorGroup('runtime')
                         .initMonitors('transaction', 'operation'),
             f = function() {
@@ -71,6 +78,7 @@ module.exports = {
         setTimeout(function() { m.updateInterval = 0; }, 510);
         
         beforeExit(function() {
+            config.enableServer(originalConfig);
             var trReport = REPORT_MANAGER.reports.filter(function(r) { return r.name === 'Transaction'; })[0];
             var opReport = REPORT_MANAGER.reports.filter(function(r) { return r.name === 'Operation'; })[0];
             assert.ok(trReport && (trReport.name === 'Transaction') && trReport.charts['runtime']);
@@ -81,5 +89,5 @@ module.exports = {
             assert.ok(opReport.charts['runtime'].rows.length >= 3);
             assert.ok(Math.abs(trReport.charts['runtime'].rows[2][3] - 100) < 10); // third column is 'median'
         });
-    },
+    }
 };

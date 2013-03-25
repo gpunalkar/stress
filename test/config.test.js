@@ -5,9 +5,13 @@ var mocha = require('mocha'),
     path = require('path'),
     baseOutputDir = path.join(process.env.HOME, '.config/stress');
 
+beforeEach(function(){
+    config.reset();
+});
+
 describe('Configuration', function(){
     describe('default settings', function(){
-        it('should not surprise us with unexpected defaults...', function(){
+        it('should not surprise us with unexpected defaults...', function(done){
             // If these values change, docs MUST be updated
             assert.equal(80, config.settings.port);
             assert.equal(false, config.settings.quiet);
@@ -18,6 +22,8 @@ describe('Configuration', function(){
             assert.equal(true, config.settings.logsEnabled);
             assert.equal(3000, config.settings.slaveUpdateInterval);
             assert.equal(baseOutputDir, config.settings.baseDirectory);
+
+            done();
         });
     });
 
@@ -190,7 +196,7 @@ describe('Configuration', function(){
             config.once('change', function(setting, o, n){
                 assert.equal('enableServer', setting);
                 assert.equal(original, o);
-                assert.equal(original, n);
+                assert.equal(true, n);
                 done();
             });
 
