@@ -175,4 +175,19 @@ describe('stats', function() {
             assert.equal('2.61', hist.stddev().toFixed(2));
         });
     });
+
+    describe('Accumulator', function(){
+        it('should accumulate 0-100 properly', function(){
+            var acc = new stats.Accumulator();
+
+            var num = -1;
+            while(++num <= 100){
+                acc.put(num);
+            }
+
+            // 5050 is a known added value
+            // See 'Anecdotes' for Carl Gauss: http://en.wikipedia.org/wiki/Carl_Friedrich_Gauss
+            assert.equal(5050, acc.get());
+        });
+    });
 });
