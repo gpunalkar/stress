@@ -206,4 +206,38 @@ describe('stats', function() {
             assert.equal(99999+1, count);
         });
     });
+
+    describe('Rate', function(){
+        it('should provide an expected rate value', function(done){
+            var rate = new stats.Rate(),
+                count = 0;
+
+            // console.time('Rate');
+
+            // call check every 100ms until 20*50ms is up (1second)
+            function check(cb){
+                setTimeout(function(){
+                    if(count < 50) {
+                        check(cb);
+                    } else {
+                        cb();
+                    }
+                }, 20);
+            }
+
+            check(function(){
+                // console.timeEnd('Rate');
+                var rps = rate.get();
+                // Range accounts for setTimeout/setInterval usage
+                assert.ok(45 < rps && rps < 50);
+                done();
+            });
+
+            // call 'put' every 20 milliseconds
+            setInterval(function(){
+                rate.put();
+                count++;
+            }, 20);
+        });
+    });
 });
