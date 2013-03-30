@@ -190,4 +190,20 @@ describe('stats', function() {
             assert.equal(5050, acc.get());
         });
     });
+
+    describe('utilities', function(){
+        it('randomString should not create non-ASCII character string in 10k tries', function(){
+            var chars = [];
+            for(var charCode = 32; charCode <= 126; charCode++) {
+                chars.push(String.fromCharCode(charCode));
+            }
+
+            var count = 0;
+            while(++count <= 99999){
+                assert.ok(~chars.indexOf(stats.randomString(1)));
+            }
+
+            assert.equal(99999+1, count);
+        });
+    });
 });
