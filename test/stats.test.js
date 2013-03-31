@@ -210,7 +210,8 @@ describe('stats', function() {
     describe('Rate', function(){
         it('should provide an expected rate value', function(done){
             var rate = new stats.Rate(),
-                count = 0;
+                count = 0,
+                putInterval = null;
 
             // console.time('Rate');
 
@@ -226,6 +227,7 @@ describe('stats', function() {
             }
 
             check(function(){
+                clearInterval(putInterval);
                 // console.timeEnd('Rate');
                 var rps = rate.get();
                 // Range accounts for setTimeout/setInterval usage
@@ -234,7 +236,7 @@ describe('stats', function() {
             });
 
             // call 'put' every 20 milliseconds
-            setInterval(function(){
+            putInterval = setInterval(function(){
                 rate.put();
                 count++;
             }, 20);
